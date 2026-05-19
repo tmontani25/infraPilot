@@ -1,0 +1,4 @@
+openstacksdk
+fastapi
+uvicorn
+python-dotenv
