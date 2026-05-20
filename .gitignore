@@ -27,6 +27,9 @@ clouds.yaml
 htmlcov/
 .coverage
 
+# Node
+node_modules/
+
 # IDE
 .vscode/
 .idea/
