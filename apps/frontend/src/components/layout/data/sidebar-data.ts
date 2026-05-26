@@ -1,21 +1,16 @@
 import {
   LayoutDashboard,
-  Monitor,
-  HelpCircle,
-  Bell,
-  Palette,
   Server,
   HardDrive,
   Settings,
-  Wrench,
-  UserCog,
   Network,
+  Cloud,
 } from 'lucide-react'
 import { type SidebarData } from '../types'
 
 export const sidebarData: SidebarData = {
   user: {
-    name: 'admin',
+    name: 'Admin',
     email: 'admin@infrapilot.local',
     avatar: '/avatars/shadcn.jpg',
   },
@@ -23,32 +18,43 @@ export const sidebarData: SidebarData = {
     {
       name: 'infraPilot',
       logo: Server,
-      plan: 'OpenStack',
+      plan: 'Infrastructure Management',
     },
   ],
   navGroups: [
     {
-      title: 'Infrastructure',
+      title: 'Mon Projet',
       items: [
         {
-          title: 'Dashboard',
+          title: 'Vue d\'ensemble',
           url: '/',
           icon: LayoutDashboard,
         },
+      ],
+    },
+    {
+      title: 'Machines',
+      items: [
         {
-          title: 'Machines Virtuelles',
-          url: '/vms',
-          icon: Server,
-        },
-        {
-          title: 'Volumes',
-          url: '/volumes',
-          icon: HardDrive,
-        },
-        {
-          title: 'Réseaux',
-          url: '/networks',
-          icon: Network,
+          title: 'OpenStack Infomaniak',
+          icon: Cloud,
+          items: [
+            {
+              title: 'Machines Virtuelles',
+              url: '/vms',
+              icon: Server,
+            },
+            {
+              title: 'Volumes',
+              url: '/volumes',
+              icon: HardDrive,
+            },
+            {
+              title: 'Réseaux',
+              url: '/networks',
+              icon: Network,
+            },
+          ],
         },
       ],
     },
@@ -60,36 +66,10 @@ export const sidebarData: SidebarData = {
           icon: Settings,
           items: [
             {
-              title: 'Profil',
-              url: '/settings',
-              icon: UserCog,
-            },
-            {
-              title: 'Compte',
-              url: '/settings/account',
-              icon: Wrench,
-            },
-            {
               title: 'Apparence',
               url: '/settings/appearance',
-              icon: Palette,
-            },
-            {
-              title: 'Notifications',
-              url: '/settings/notifications',
-              icon: Bell,
-            },
-            {
-              title: 'Affichage',
-              url: '/settings/display',
-              icon: Monitor,
             },
           ],
-        },
-        {
-          title: 'Centre d\'aide',
-          url: '/help-center',
-          icon: HelpCircle,
         },
       ],
     },

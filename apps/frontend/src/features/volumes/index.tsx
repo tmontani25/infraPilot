@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Trash2 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -9,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
@@ -30,6 +32,7 @@ function attachedTo(volume: Volume) {
 export function Volumes() {
   const { data: volumes, isLoading } = useVolumes()
   const deleteVolume = useDeleteVolume()
+  const [volumeToDelete, setVolumeToDelete] = useState<string | null>(null)
 
   return (
     <>
@@ -79,7 +82,7 @@ export function Volumes() {
                     title='Supprimer'
                     className='text-destructive hover:text-destructive'
                     disabled={volume.status === 'in-use' || deleteVolume.isPending}
-                    onClick={() => deleteVolume.mutate(volume.id)}
+                    onClick={() => setVolumeToDelete(volume.id)}
                   >
                     <Trash2 className='size-4' />
                   </Button>
@@ -89,6 +92,20 @@ export function Volumes() {
           </TableBody>
         </Table>
       </Main>
+
+      <ConfirmDialog
+        open={volumeToDelete !== null}
+        onOpenChange={(open) => !open && setVolumeToDelete(null)}
+        title='Supprimer le volume ?'
+        desc='Cette action est irréversible. Le volume sera définitivement supprimé.'
+        destructive
+        confirmText='Supprimer'
+        handleConfirm={() => {
+          if (volumeToDelete) deleteVolume.mutate(volumeToDelete)
+          setVolumeToDelete(null)
+        }}
+        isLoading={deleteVolume.isPending}
+      />
     </>
   )
 }

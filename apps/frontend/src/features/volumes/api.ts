@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import apiClient from '@/lib/api-client'
 
 export type Volume = {
@@ -32,6 +33,9 @@ export const useDeleteVolume = () => {
   return useMutation({
     mutationFn: (id: string) =>
       apiClient.delete(`/volumes/${id}`).then((r) => r.data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: volumeKeys.all }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: volumeKeys.all })
+      toast.success('Volume supprimé')
+    },
   })
 }
