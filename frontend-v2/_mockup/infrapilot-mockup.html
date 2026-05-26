@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infrapilot — Mockup UI</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  /* ============================================================
+     INFRAPILOT — Design System
+     Inspiré de PegaProx / Proxmox VE
+     Palette : fond #111214, surface #1e2126, sidebar #1a1d21
+     Accent orange : #e8690a
+  ============================================================ */
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:           #111214;
+    --surface:      #1e2126;
+    --sidebar:      #1a1d21;
+    --input:        #252830;
+    --border:       #2a2d32;
+    --border-hover: #3a3d42;
+    --accent:       #e8690a;
+    --accent-hover: #d15e08;
+    --text-primary: #ffffff;
+    --text-secondary: #888888;
+    --text-muted:   #555555;
+    --green:        #22c55e;
+    --yellow:       #f59e0b;
+    --red:          #ef4444;
+    --blue:         #60a5fa;
+    --purple:       #a78bfa;
+
+    /* Tags */
+    --tag-os-bg:    #1e3a5f; --tag-os-text:  #60a5fa;
+    --tag-pve-bg:   #2e1f5e; --tag-pve-text: #a78bfa;
+    --tag-vps-bg:   #1a3a2a; --tag-vps-text: #4ade80;
+    --tag-fw-bg:    #3a1a1a; --tag-fw-text:  #f87171;
+    --tag-lxc-bg:   #1a2a3a; --tag-lxc-text: #38bdf8;
+  }
+
+  html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); }
+
+  /* ── App shell ── */
+  .app { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+  /* ── Topbar ── */
+  .topbar {
+    height: 46px; background: var(--sidebar);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 14px; gap: 10px;
+    flex-shrink: 0; z-index: 10;
+  }
+  .tb-logo { display: flex; align-items: center; gap: 8px; }
+  .tb-logo .mark {
+    width: 26px; height: 26px; background: var(--accent); border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: #fff;
+  }
+  .tb-brand { font-size: 13px; font-weight: 600; color: #fff; }
+  .tb-sub   { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+  .tb-search {
+    flex: 1; max-width: 280px; height: 28px;
+    background: var(--input); border: 1px solid var(--border); border-radius: 6px;
+    display: flex; align-items: center; padding: 0 8px; gap: 6px; margin: 0 16px;
+  }
+  .tb-search i { font-size: 13px; color: var(--text-muted); }
+  .tb-search input { background: none; border: none; outline: none; color: #aaa; font-size: 11px; width: 100%; }
+  .tb-search input::placeholder { color: #444; }
+  .spacer { flex: 1; }
+  .tb-live {
+    display: flex; align-items: center; gap: 5px; font-size: 11px; color: #aaa;
+    padding: 4px 8px; background: var(--input); border: 1px solid var(--border); border-radius: 5px;
+  }
+  .tb-live .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .tb-add {
+    height: 28px; padding: 0 12px; background: var(--accent); border: none; border-radius: 6px;
+    font-size: 11px; font-weight: 500; color: #fff; cursor: pointer;
+    display: flex; align-items: center; gap: 5px; transition: background .15s;
+  }
+  .tb-add:hover { background: var(--accent-hover); }
+  .tb-user {
+    height: 28px; padding: 0 10px; background: var(--input); border: 1px solid var(--border);
+    border-radius: 6px; font-size: 11px; color: #ccc; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .tb-avatar {
+    width: 20px; height: 20px; border-radius: 50%; background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 600; color: #fff;
+  }
+
+  /* ── Body ── */
+  .body { display: flex; flex: 1; overflow: hidden; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 210px; background: var(--sidebar); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0;
+  }
+  .sidebar::-webkit-scrollbar { width: 3px; }
+  .sidebar::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+  .sb-section-hd {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px 4px;
+    font-size: 10px; font-weight: 500; color: var(--text-muted);
+    letter-spacing: .08em; text-transform: uppercase;
+  }
+  .sb-section-hd i { font-size: 13px; cursor: pointer; color: #444; }
+  .sb-section-hd i:hover { color: #888; }
+
+  .sb-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 12px; cursor: pointer;
+    color: #888; font-size: 11px;
+    border-left: 2px solid transparent;
+    transition: background .12s, color .12s, border-color .12s;
+    position: relative;
+  }
+  .sb-item:hover { background: rgba(255,255,255,.04); color: #ccc; }
+  .sb-item.active { background: rgba(232,105,10,.12); color: var(--accent); border-left-color: var(--accent); }
+
+  .sb-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .sb-dot.on  { background: var(--green); }
+  .sb-dot.off { background: #444; }
+
+  .sb-item > i.ti { font-size: 14px; flex-shrink: 0; width: 16px; }
+  .sb-info { flex: 1; min-width: 0; }
+  .sb-name { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sb-ip   { font-size: 9px; color: var(--text-muted); margin-top: 1px; }
+
+  .sb-badge { font-size: 9px; padding: 1px 5px; border-radius: 3px; font-weight: 500; white-space: nowrap; }
+  .sb-badge.auto  { background: #1a3a2a; color: var(--green); }
+  .sb-badge.alert { background: #2b1a0d; color: var(--yellow); }
+
+  .sb-actions { display: none; gap: 4px; margin-left: auto; }
+  .sb-item:hover .sb-actions { display: flex; }
+  .sb-action-btn {
+    width: 18px; height: 18px; border-radius: 3px; background: var(--input);
+    border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: #888; transition: color .1s;
+  }
+  .sb-action-btn:hover { color: #ccc; }
+  .sb-action-btn i { font-size: 11px; }
+
+  .sb-children { overflow: hidden; max-height: 0; transition: max-height .2s ease; background: #161819; }
+  .sb-children.open { max-height: 300px; }
+  .sb-child {
+    display: flex; align-items: center; gap: 7px;
+    padding: 5px 12px 5px 30px; cursor: pointer;
+    color: #666; font-size: 10px; transition: all .1s;
+  }
+  .sb-child:hover { color: #aaa; background: rgba(255,255,255,.03); }
+  .sb-child.active { color: var(--accent); }
+  .sb-child i { font-size: 12px; }
+
+  .sb-add {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; cursor: pointer; color: #444; font-size: 10px;
+    border: 1px dashed var(--border); margin: 6px 10px; border-radius: 5px;
+    transition: all .1s;
+  }
+  .sb-add:hover { color: #888; border-color: #444; }
+
+  .sb-divider { height: 0.5px; background: var(--border); margin: 6px 0; }
+
+  .sb-bottom {
+    margin-top: auto; padding: 10px 12px;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .sb-bot-avatar {
+    width: 26px; height: 26px; border-radius: 50%; background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 600; color: #fff; flex-shrink: 0;
+  }
+  .sb-bot-name { font-size: 11px; font-weight: 500; color: #bbb; }
+  .sb-bot-role { font-size: 9px;  color: var(--text-muted); margin-top: 1px; }
+
+  /* ── Main area ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  .tab-bar {
+    height: 44px; background: var(--sidebar); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 14px; gap: 0; flex-shrink: 0;
+  }
+  .tab {
+    height: 44px; padding: 0 13px; font-size: 11px; cursor: pointer;
+    color: #888; border-bottom: 2px solid transparent;
+    display: flex; align-items: center; gap: 5px;
+    transition: color .12s, border-color .12s, background .12s; white-space: nowrap;
+  }
+  .tab:hover { color: #ccc; }
+  .tab.active { color: #fff; border-bottom-color: var(--accent); background: rgba(232,105,10,.08); }
+  .tab i { font-size: 13px; }
+
+  .sub-tab-bar {
+    display: none; align-items: center; padding: 8px 14px; gap: 6px;
+    border-bottom: 1px solid var(--border); background: var(--sidebar); flex-shrink: 0;
+  }
+  .sub-tab-bar.show { display: flex; }
+  .sub-tab {
+    height: 28px; padding: 0 12px; font-size: 11px; cursor: pointer;
+    color: #888; border-radius: 5px; display: flex; align-items: center; gap: 5px;
+    border: 1px solid transparent; transition: all .1s;
+  }
+  .sub-tab:hover { color: #ccc; background: var(--input); }
+  .sub-tab.active { color: #fff; background: var(--accent); border-color: var(--accent); }
+  .sub-tab i { font-size: 13px; }
+
+  .content {
+    flex: 1; overflow-y: auto; padding: 14px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .content::-webkit-scrollbar { width: 4px; }
+  .content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* ── Views ── */
+  .view { display: none; flex-direction: column; gap: 12px; }
+  .view.show { display: flex; }
+
+  /* ── Components ── */
+
+  /* Overview header */
+  .overview-header {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px; display: flex; align-items: center; gap: 12px;
+  }
+  .overview-icon {
+    width: 42px; height: 42px; border-radius: 9px; background: var(--accent);
+    display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; flex-shrink: 0;
+  }
+  .overview-title { font-size: 15px; font-weight: 500; color: #fff; }
+  .overview-sub   { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  /* Status pills */
+  .pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10px; font-weight: 500; padding: 3px 8px; border-radius: 5px; border-width: 1px; border-style: solid;
+  }
+  .pill-live  { background: #0d2b1a; color: var(--green);  border-color: #1a4a2a; }
+  .pill-alert { background: #2b1a0d; color: var(--yellow); border-color: #4a2a1a; }
+  .pill-error { background: #2b1a1a; color: var(--red);    border-color: #4a2a2a; }
+
+  /* Stats row */
+  .stats-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .stat-box {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 7px;
+    padding: 11px 14px; display: flex; align-items: center; gap: 10px;
+    flex: 1; min-width: 90px;
+  }
+  .stat-box > i { font-size: 18px; color: #888; }
+  .stat-val   { font-size: 16px; font-weight: 500; color: #fff; }
+  .stat-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; margin-top: 1px; }
+
+  /* Ring gauge */
+  .ring {
+    width: 38px; height: 38px; position: relative; flex-shrink: 0;
+  }
+  .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring .pct {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 500; color: #ccc;
+  }
+
+  /* Grid layouts */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+  /* Card */
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 13px 14px;
+  }
+  .card-title {
+    font-size: 11px; font-weight: 500; color: #888; text-transform: uppercase;
+    letter-spacing: .07em; margin-bottom: 10px;
+  }
+
+  /* Cluster card (overview) */
+  .cluster-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 13px 14px; border-left-width: 3px; border-left-style: solid; cursor: pointer;
+    transition: border-color .12s;
+  }
+  .cluster-card:hover { border-color: rgba(232,105,10,.4); }
+  .cluster-card-hd { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .cluster-initials {
+    width: 28px; height: 28px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: #fff; flex-shrink: 0;
+  }
+  .cluster-name { font-size: 12px; font-weight: 500; color: #fff; }
+  .cluster-ip   { font-size: 9px; color: var(--text-muted); }
+  .cluster-score { margin-left: auto; font-size: 12px; font-weight: 500; color: var(--accent); }
+  .cluster-stats { display: flex; gap: 14px; justify-content: space-around; margin-bottom: 8px; }
+  .cs-val   { font-size: 16px; font-weight: 500; color: #fff; text-align: center; }
+  .cs-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; text-align: center; }
+  .cluster-footer { font-size: 9px; color: #444; }
+
+  /* Project card */
+  .proj-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 7px;
+    padding: 10px 13px; cursor: pointer; display: flex; align-items: center; gap: 10px;
+    transition: border-color .12s;
+  }
+  .proj-card:hover { border-color: rgba(232,105,10,.4); }
+  .proj-icon {
+    width: 32px; height: 32px; border-radius: 7px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 15px;
+  }
+  .proj-name { font-size: 12px; font-weight: 500; color: #fff; }
+  .proj-sub  { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+  .proj-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+  /* VM card */
+  .vm-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 13px; cursor: pointer; transition: border-color .12s;
+  }
+  .vm-card:hover { border-color: rgba(232,105,10,.4); }
+  .vm-card.error { border-color: #4a1a1a; }
+  .vm-card-hd { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; }
+  .vm-check { width: 14px; height: 14px; border-radius: 3px; border: 1px solid #444; flex-shrink: 0; }
+  .vm-type-icon { font-size: 14px; color: #888; }
+  .vm-name { font-size: 12px; font-weight: 500; color: #fff; flex: 1; }
+  .vm-id   { font-size: 9px; color: var(--text-muted); margin-top: 1px; }
+  .vm-online-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+  .vm-meta { display: flex; flex-direction: column; gap: 5px; font-size: 10px; }
+  .vm-meta-row { display: flex; align-items: center; justify-content: space-between; }
+  .vm-meta-key { color: var(--text-muted); }
+  .vm-meta-val { color: #ccc; font-weight: 500; }
+  .vm-meta-val.run  { color: var(--green); }
+  .vm-meta-val.warn { color: var(--yellow); }
+  .vm-meta-val.err  { color: var(--red); }
+
+  /* Tags */
+  .tags { display: flex; gap: 4px; flex-wrap: wrap; margin: 4px 0; }
+  .tag { font-size: 9px; padding: 2px 6px; border-radius: 3px; font-weight: 500; }
+  .tag-os  { background: var(--tag-os-bg);  color: var(--tag-os-text); }
+  .tag-pve { background: var(--tag-pve-bg); color: var(--tag-pve-text); }
+  .tag-vps { background: var(--tag-vps-bg); color: var(--tag-vps-text); }
+  .tag-fw  { background: var(--tag-fw-bg);  color: var(--tag-fw-text); }
+  .tag-lxc { background: var(--tag-lxc-bg); color: var(--tag-lxc-text); }
+
+  /* Progress bar */
+  .prog-bar { height: 3px; border-radius: 2px; background: var(--input); overflow: hidden; margin-top: 2px; }
+  .prog-fill { height: 100%; border-radius: 2px; transition: width .3s; }
+
+  /* VM actions */
+  .vm-actions {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 9px; padding-top: 8px; border-top: 1px solid var(--input);
+  }
+  .vm-act-btn {
+    width: 24px; height: 24px; border-radius: 4px;
+    background: var(--input); border: 1px solid var(--border);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: #888; font-size: 12px; transition: all .1s;
+  }
+  .vm-act-btn:hover { background: #333; color: #fff; }
+  .vm-more { margin-left: auto; }
+
+  /* Alert items */
+  .alert-item {
+    background: #1a1d21; border: 1px solid var(--border); border-radius: 6px;
+    padding: 7px 9px; display: flex; align-items: flex-start; gap: 7px;
+    border-left-width: 2px; border-left-style: solid;
+  }
+  .alert-item.crit { border-left-color: var(--red); }
+  .alert-item.warn { border-left-color: var(--yellow); }
+  .alert-item.info { border-left-color: var(--blue); }
+  .alert-text { font-size: 11px; color: var(--text-primary); line-height: 1.4; }
+  .alert-meta { font-size: 9px; color: var(--text-muted); margin-top: 2px; }
+
+  /* Top resources table */
+  .tr-table { width: 100%; font-size: 10px; border-collapse: collapse; }
+  .tr-table th {
+    color: var(--text-muted); text-align: left; padding: 4px 6px; font-weight: 400;
+    text-transform: uppercase; font-size: 9px; letter-spacing: .05em;
+    border-bottom: 1px solid var(--input);
+  }
+  .tr-table td { padding: 7px 6px; color: #aaa; border-bottom: 1px solid #1a1d21; vertical-align: middle; }
+  .tr-table tr:hover td { background: rgba(255,255,255,.02); }
+
+  .inline-bar { height: 3px; background: var(--input); border-radius: 2px; overflow: hidden; width: 70px; display: inline-block; vertical-align: middle; margin-left: 6px; }
+  .inline-fill { height: 100%; border-radius: 2px; }
+
+  .status-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 9px; padding: 2px 7px; border-radius: 10px; font-weight: 500; }
+  .sp-run  { background: #0d2b1a; color: var(--green); }
+  .sp-run::before  { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+  .sp-err  { background: #2b1a1a; color: var(--red); }
+
+  /* Search + filter bar */
+  .search-bar {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 7px;
+    padding: 7px 12px; display: flex; align-items: center; gap: 8px;
+  }
+  .search-bar input { background: none; border: none; outline: none; color: #aaa; font-size: 11px; flex: 1; }
+  .search-bar input::placeholder { color: #444; }
+
+  .filter-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .fb {
+    height: 26px; padding: 0 10px; border-radius: 5px; border: 1px solid var(--border);
+    background: transparent; font-size: 10px; color: #666; cursor: pointer; transition: all .1s;
+  }
+  .fb:hover { color: #aaa; border-color: #444; }
+  .fb.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .view-toggle { display: flex; gap: 3px; margin-left: auto; }
+  .vt-btn {
+    width: 26px; height: 26px; border-radius: 4px; border: 1px solid var(--border);
+    background: transparent; cursor: pointer; color: var(--text-muted); font-size: 13px;
+    display: flex; align-items: center; justify-content: center; transition: all .1s;
+  }
+  .vt-btn.active { background: var(--input); color: #ccc; }
+  .vt-btn:hover  { background: var(--input); color: #ccc; }
+
+  /* Create buttons */
+  .btn-create-vm  { background: var(--accent); border: none; border-radius: 5px; padding: 6px 14px; color: #fff; font-size: 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: background .15s; }
+  .btn-create-vm:hover { background: var(--accent-hover); }
+  .btn-create-ct  { background: #7c3aed; border: none; border-radius: 5px; padding: 6px 14px; color: #fff; font-size: 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+
+  /* Cluster health */
+  .health-ring { width: 72px; height: 72px; position: relative; margin: 0 auto 8px; }
+  .health-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .health-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .health-num { font-size: 18px; font-weight: 500; color: #fff; }
+  .health-lbl { font-size: 8px; color: var(--green); margin-top: -1px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ════════════════════════════════════════════
+       TOPBAR
+  ════════════════════════════════════════════ -->
+  <header class="topbar">
+    <div class="tb-logo">
+      <div class="mark">IP</div>
+      <div>
+        <div class="tb-brand">Infrapilot</div>
+        <div class="tb-sub">Infrastructure Management</div>
+      </div>
+    </div>
+    <div class="tb-search">
+      <i class="ti ti-search"></i>
+      <input placeholder="Search all clusters...">
+    </div>
+    <div class="spacer"></div>
+    <div class="tb-live"><span class="dot"></span>Live</div>
+    <button class="tb-add" onclick=""><i class="ti ti-plus"></i> Add Client</button>
+    <div class="tb-user">
+      <div class="tb-avatar">AL</div>
+      Admin <i class="ti ti-chevron-down" style="font-size:11px"></i>
+    </div>
+  </header>
+
+  <div class="body">
+
+    <!-- ════════════════════════════════════════
+         SIDEBAR
+    ════════════════════════════════════════ -->
+    <nav class="sidebar">
+
+      <!-- Section Clients -->
+      <div class="sb-section-hd">
+        Clients <i class="ti ti-plus" title="Ajouter un client"></i>
+      </div>
+
+      <div class="sb-item active" id="sb-all" onclick="openView('all-overview')">
+        <i class="ti ti-layout-grid"></i>
+        <div class="sb-info">
+          <div class="sb-name">All Clients</div>
+          <div class="sb-ip">4 clients</div>
+        </div>
+      </div>
+
+      <!-- Client : Étude MBLD -->
+      <div class="sb-item" id="sb-mbld" onclick="toggleClient('mbld')">
+        <span class="sb-dot on"></span>
+        <div class="sb-info">
+          <div class="sb-name">Étude MBLD</div>
+          <div class="sb-ip">etude-mbld.ch</div>
+        </div>
+        <span class="sb-badge auto">Auto</span>
+        <div class="sb-actions">
+          <button class="sb-action-btn" title="Supprimer"><i class="ti ti-trash"></i></button>
+          <button class="sb-action-btn" title="Config"><i class="ti ti-settings"></i></button>
+        </div>
+      </div>
+      <div class="sb-children" id="ch-mbld">
+        <div class="sb-child" onclick="openView('client-overview','mbld')"><i class="ti ti-layout-dashboard"></i> Vue d'ensemble</div>
+        <div class="sb-child" onclick="openView('client-projets','mbld')"><i class="ti ti-folders"></i> Projets</div>
+      </div>
+
+      <!-- Client : Fiduciaire Val -->
+      <div class="sb-item" id="sb-fiduval" onclick="toggleClient('fiduval')">
+        <span class="sb-dot on"></span>
+        <div class="sb-info">
+          <div class="sb-name">Fiduciaire Val</div>
+          <div class="sb-ip">fidval.ch</div>
+        </div>
+        <div class="sb-actions">
+          <button class="sb-action-btn" title="Supprimer"><i class="ti ti-trash"></i></button>
+          <button class="sb-action-btn" title="Config"><i class="ti ti-settings"></i></button>
+        </div>
+      </div>
+      <div class="sb-children" id="ch-fiduval">
+        <div class="sb-child" onclick="openView('client-overview','fiduval')"><i class="ti ti-layout-dashboard"></i> Vue d'ensemble</div>
+        <div class="sb-child" onclick="openView('client-projets','fiduval')"><i class="ti ti-folders"></i> Projets</div>
+      </div>
+
+      <!-- Client : Synapse Tech -->
+      <div class="sb-item" id="sb-synapse" onclick="toggleClient('synapse')">
+        <span class="sb-dot on"></span>
+        <div class="sb-info">
+          <div class="sb-name">Synapse Tech</div>
+          <div class="sb-ip">synapse.io</div>
+        </div>
+        <div class="sb-actions">
+          <button class="sb-action-btn" title="Supprimer"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>
+      <div class="sb-children" id="ch-synapse">
+        <div class="sb-child" onclick="openView('client-overview','synapse')"><i class="ti ti-layout-dashboard"></i> Vue d'ensemble</div>
+        <div class="sb-child" onclick="openView('client-projets','synapse')"><i class="ti ti-folders"></i> Projets</div>
+      </div>
+
+      <!-- Client : Kantox SA -->
+      <div class="sb-item" id="sb-kantox" onclick="toggleClient('kantox')">
+        <span class="sb-dot off"></span>
+        <div class="sb-info">
+          <div class="sb-name">Kantox SA</div>
+          <div class="sb-ip">kantox.com</div>
+        </div>
+        <div class="sb-actions">
+          <button class="sb-action-btn" title="Config"><i class="ti ti-settings"></i></button>
+        </div>
+      </div>
+      <div class="sb-children" id="ch-kantox">
+        <div class="sb-child" onclick="openView('client-overview','kantox')"><i class="ti ti-layout-dashboard"></i> Vue d'ensemble</div>
+        <div class="sb-child" onclick="openView('client-projets','kantox')"><i class="ti ti-folders"></i> Projets</div>
+      </div>
+
+      <div class="sb-add"><i class="ti ti-plus"></i> Add Client</div>
+      <div class="sb-divider"></div>
+
+      <!-- Section Machines -->
+      <div class="sb-section-hd">Machines <i class="ti ti-plus"></i></div>
+
+      <div class="sb-item" id="sb-os" onclick="openView('machines','openstack')">
+        <i class="ti ti-cloud" style="color:#60a5fa"></i>
+        <div class="sb-info">
+          <div class="sb-name">OpenStack Infomaniak</div>
+          <div class="sb-ip">5 VMs</div>
+        </div>
+      </div>
+      <div class="sb-item" id="sb-pve" onclick="openView('machines','proxmox')">
+        <i class="ti ti-server-2" style="color:#a78bfa"></i>
+        <div class="sb-info">
+          <div class="sb-name">Proxmox</div>
+          <div class="sb-ip">3 nodes</div>
+        </div>
+      </div>
+      <div class="sb-item" id="sb-vps" onclick="openView('machines','vps')">
+        <i class="ti ti-cloud-computing" style="color:#4ade80"></i>
+        <div class="sb-info">
+          <div class="sb-name">VPS</div>
+          <div class="sb-ip">3 instances</div>
+        </div>
+      </div>
+      <div class="sb-item" id="sb-fw" onclick="openView('machines','firewall')">
+        <i class="ti ti-shield-check" style="color:#f87171"></i>
+        <div class="sb-info">
+          <div class="sb-name">Firewalls</div>
+          <div class="sb-ip">2 actifs</div>
+        </div>
+      </div>
+
+      <div class="sb-bottom">
+        <div class="sb-bot-avatar">AL</div>
+        <div>
+          <div class="sb-bot-name">A. Lambert</div>
+          <div class="sb-bot-role">Admin</div>
+        </div>
+        <i class="ti ti-settings" style="font-size:14px;color:#444;margin-left:auto;cursor:pointer"></i>
+      </div>
+    </nav>
+
+    <!-- ════════════════════════════════════════
+         MAIN
+    ════════════════════════════════════════ -->
+    <div class="main">
+
+      <!-- Tab bar -->
+      <div class="tab-bar" id="tab-bar">
+        <div class="tab active" id="tab-overview"    onclick="switchTab('overview')">  <i class="ti ti-layout-dashboard"></i> Overview</div>
+        <div class="tab"        id="tab-resources"   onclick="switchTab('resources')"> <i class="ti ti-server"></i> Resources</div>
+        <div class="tab"        id="tab-network"     onclick="switchTab('network')">   <i class="ti ti-topology-star"></i> Network</div>
+        <div class="tab"        id="tab-datastore"   onclick="switchTab('datastore')"> <i class="ti ti-database"></i> Datastore</div>
+        <div class="tab"        id="tab-automation"  onclick="switchTab('automation')"><i class="ti ti-bolt"></i> Automation</div>
+        <div class="tab"        id="tab-reports"     onclick="switchTab('reports')">   <i class="ti ti-chart-bar"></i> Reports</div>
+        <div class="tab"        id="tab-settings"    onclick="switchTab('settings')">  <i class="ti ti-settings"></i> Settings</div>
+      </div>
+
+      <!-- Sub tab bar (Resources only) -->
+      <div class="sub-tab-bar" id="sub-tab-bar">
+        <div class="sub-tab active" id="stab-rm"   onclick="switchSubTab('rm')">  <i class="ti ti-server"></i> Resource Management</div>
+        <div class="sub-tab"        id="stab-snap" onclick="switchSubTab('snap')"><i class="ti ti-camera"></i> Snapshot Overview</div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           CONTENT AREA
+      ══════════════════════════════════════ -->
+      <div class="content">
+
+        <!-- ── VIEW: All clients overview ── -->
+        <div id="view-all-overview" class="view show">
+
+          <div class="overview-header">
+            <div class="overview-icon"><i class="ti ti-layout-grid"></i></div>
+            <div>
+              <div class="overview-title">All Clients Overview</div>
+              <div class="overview-sub">Summary of all managed infrastructure</div>
+            </div>
+            <div style="margin-left:auto">
+              <span class="pill pill-live"><i class="ti ti-circle-check" style="font-size:10px"></i> Live</span>
+            </div>
+          </div>
+
+          <div class="stats-row">
+            <div class="stat-box"><i class="ti ti-building-community"></i><div><div class="stat-val">4</div><div class="stat-label">Clients</div></div></div>
+            <div class="stat-box"><i class="ti ti-server"></i><div><div class="stat-val">50</div><div class="stat-label">Machines</div></div></div>
+            <div class="stat-box" style="background:#1a2a3a;border-color:#1e3a5f">
+              <div class="ring" id="ring-cpu-global"></div>
+              <div><div class="stat-val">58%</div><div class="stat-label">CPU avg</div></div>
+            </div>
+            <div class="stat-box" style="background:#2b1a0d;border-color:#4a2a1a">
+              <div class="ring" id="ring-ram-global"></div>
+              <div><div class="stat-val">74%</div><div class="stat-label">RAM avg</div></div>
+            </div>
+            <div class="stat-box">
+              <div class="ring" id="ring-sto-global"></div>
+              <div><div class="stat-val">45%</div><div class="stat-label">Storage avg</div></div>
+            </div>
+            <div class="stat-box"><i class="ti ti-bell" style="color:#f87171"></i><div><div class="stat-val" style="color:#f87171">3</div><div class="stat-label">Alerts</div></div></div>
+          </div>
+
+          <div class="grid-2" id="clusters-grid">
+            <!-- Injected by JS -->
+          </div>
+
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+              <div>
+                <div style="font-size:12px;font-weight:500;color:#fff">Top Resources</div>
+                <div style="font-size:10px;color:var(--text-muted);margin-top:1px">Highest CPU and RAM usage across all clients</div>
+              </div>
+              <span style="font-size:9px;color:var(--text-muted);background:var(--input);padding:2px 7px;border-radius:4px">Top 10</span>
+            </div>
+            <table class="tr-table">
+              <thead>
+                <tr><th>Type</th><th>Name</th><th>Client</th><th>Projet</th><th>CPU</th><th>RAM</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><i class="ti ti-device-desktop" style="font-size:13px;color:#a78bfa"></i></td>
+                  <td><div style="color:#fff;font-size:11px">db-prod-master</div><div style="font-size:9px;color:#444">ID: 201</div></td>
+                  <td>Étude MBLD</td><td>Infra prod</td>
+                  <td><span style="color:#ef4444">88%</span><div class="inline-bar"><div class="inline-fill" style="width:88%;background:#ef4444"></div></div></td>
+                  <td><span style="color:#ef4444">91%</span><div class="inline-bar"><div class="inline-fill" style="width:91%;background:#ef4444"></div></div></td>
+                  <td><span class="status-pill sp-run">Running</span></td>
+                </tr>
+                <tr>
+                  <td><i class="ti ti-device-desktop" style="font-size:13px;color:#60a5fa"></i></td>
+                  <td><div style="color:#fff;font-size:11px">worker-ml-03</div><div style="font-size:9px;color:#444">ID: 305</div></td>
+                  <td>Synapse Tech</td><td>Platform ML</td>
+                  <td><span style="color:#888">0%</span></td><td><span style="color:#888">0%</span></td>
+                  <td><span class="status-pill sp-err">Error</span></td>
+                </tr>
+                <tr>
+                  <td><i class="ti ti-device-desktop" style="font-size:13px;color:#4ade80"></i></td>
+                  <td><div style="color:#fff;font-size:11px">vps-api-synapse</div><div style="font-size:9px;color:#444">ID: 401</div></td>
+                  <td>Synapse Tech</td><td>API Gateway</td>
+                  <td><span style="color:#f59e0b">70%</span><div class="inline-bar"><div class="inline-fill" style="width:70%;background:#f59e0b"></div></div></td>
+                  <td><span style="color:#e8690a">65%</span><div class="inline-bar"><div class="inline-fill" style="width:65%;background:#e8690a"></div></div></td>
+                  <td><span class="status-pill sp-run">Running</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ── VIEW: Client overview ── -->
+        <div id="view-client-overview" class="view">
+          <div class="overview-header" id="cov-header"></div>
+          <div class="stats-row" id="cov-stats"></div>
+          <div class="grid-2">
+            <div style="display:flex;flex-direction:column;gap:8px" id="cov-proj-list"></div>
+            <div class="card">
+              <div class="card-title">Alertes actives</div>
+              <div style="display:flex;flex-direction:column;gap:6px" id="cov-alerts"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── VIEW: Client projects ── -->
+        <div id="view-client-projets" class="view">
+          <div style="font-size:13px;font-weight:500;color:#fff;margin-bottom:4px" id="vcp-title"></div>
+          <div style="display:flex;flex-direction:column;gap:8px" id="vcp-list"></div>
+        </div>
+
+        <!-- ── VIEW: Project dashboard ── -->
+        <div id="view-project" class="view">
+          <div class="stats-row" id="vproj-stats"></div>
+          <div class="grid-3" id="vproj-vms"></div>
+        </div>
+
+        <!-- ── VIEW: Resources (global) ── -->
+        <div id="view-resources" class="view">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <div class="search-bar" style="flex:1;min-width:200px">
+              <i class="ti ti-search" style="font-size:13px;color:#444"></i>
+              <input placeholder="Search by name or ID...">
+            </div>
+            <div class="filter-row">
+              <button class="fb active" onclick="filterFb(this)">All</button>
+              <button class="fb" onclick="filterFb(this)">Active</button>
+              <button class="fb" onclick="filterFb(this)">Stopped</button>
+              <button class="fb" onclick="filterFb(this)">VM</button>
+              <button class="fb" onclick="filterFb(this)">LXC</button>
+            </div>
+            <div class="view-toggle">
+              <button class="vt-btn active" title="Grille"><i class="ti ti-layout-grid"></i></button>
+              <button class="vt-btn" title="Liste"><i class="ti ti-list"></i></button>
+              <button class="vt-btn" title="Aperçu"><i class="ti ti-eye"></i></button>
+            </div>
+          </div>
+          <div class="grid-3" id="resources-grid"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;font-size:10px;color:var(--text-muted)">
+            <span>Showing 1–5 of 13 resources</span>
+            <div style="display:flex;gap:8px">
+              <button class="btn-create-vm"><i class="ti ti-plus"></i> Create new VM</button>
+              <button class="btn-create-ct"><i class="ti ti-plus"></i> Create new Container</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── VIEW: Machines (filtered by type) ── -->
+        <div id="view-machines" class="view">
+          <div style="font-size:13px;font-weight:500;color:#fff;margin-bottom:4px" id="vm-title"></div>
+          <div class="grid-3" id="vm-grid-list"></div>
+        </div>
+
+      </div><!-- /content -->
+    </div><!-- /main -->
+  </div><!-- /body -->
+</div><!-- /app -->
+
+<script>
+/* ════════════════════════════════════════════════
+   DATA
+════════════════════════════════════════════════ */
+const CLIENTS = {
+  mbld: {
+    name:'Étude MBLD', ip:'etude-mbld.ch', initials:'MB', color:'#1d4ed8',
+    vms:14, cpu:67, ram:82, alerts:2,
+    projets:[
+      {name:'Infra prod MBLD',  sub:'6 VMs · OpenStack', icon:'ti-cloud',        bg:'#1e3a5f', tag:'tag-os',  status:'run'},
+      {name:'Backup & PRA',     sub:'2 VMs · VPS',       icon:'ti-database',     bg:'#1a3a2a', tag:'tag-vps', status:'run'},
+      {name:'Portail client',   sub:'3 VMs · Proxmox',   icon:'ti-world',        bg:'#2e1f5e', tag:'tag-pve', status:'warn'},
+    ]
+  },
+  fiduval: {
+    name:'Fiduciaire Val', ip:'fidval.ch', initials:'FV', color:'#0f766e',
+    vms:8, cpu:42, ram:55, alerts:0,
+    projets:[
+      {name:'ERP comptable',   sub:'4 VMs · Proxmox',   icon:'ti-calculator',   bg:'#1a2a3a', tag:'tag-pve', status:'run'},
+      {name:'VPN site-à-site', sub:'1 FW · OPNsense',   icon:'ti-shield-check', bg:'#3a1a1a', tag:'tag-fw',  status:'run'},
+    ]
+  },
+  synapse: {
+    name:'Synapse Tech', ip:'synapse.io', initials:'ST', color:'#7c3aed',
+    vms:22, cpu:78, ram:70, alerts:1,
+    projets:[
+      {name:'Platform ML',   sub:'8 VMs · OpenStack GPU', icon:'ti-brain',      bg:'#2e1f5e', tag:'tag-os',  status:'run'},
+      {name:'API Gateway',   sub:'3 VMs · VPS',           icon:'ti-api',        bg:'#1a3a2a', tag:'tag-vps', status:'warn'},
+      {name:'Data lake',     sub:'6 VMs · Proxmox',       icon:'ti-database',   bg:'#1e3a5f', tag:'tag-pve', status:'run'},
+    ]
+  },
+  kantox: {
+    name:'Kantox SA', ip:'kantox.com', initials:'KX', color:'#be185d',
+    vms:6, cpu:35, ram:48, alerts:0,
+    projets:[
+      {name:'SaaS Kantox', sub:'4 VMs · OpenStack', icon:'ti-currency-euro', bg:'#1e3a5f', tag:'tag-os', status:'run'},
+    ]
+  }
+};
+
+const MACHINES = {
+  openstack: { title:'OpenStack Infomaniak', vms:[
+    {name:'web-prod-01',    id:101, tag:'tag-os',  tl:'VM OpenStack', cpu:72, ram:40, status:'run'},
+    {name:'db-prod-master', id:102, tag:'tag-os',  tl:'VM OpenStack', cpu:88, ram:91, status:'err'},
+    {name:'api-gateway-02', id:103, tag:'tag-os',  tl:'VM OpenStack', cpu:45, ram:62, status:'warn'},
+    {name:'worker-ml-03',   id:104, tag:'tag-os',  tl:'VM OpenStack', cpu:0,  ram:0,  status:'err'},
+    {name:'lb-prod-01',     id:105, tag:'tag-os',  tl:'VM OpenStack', cpu:22, ram:30, status:'run'},
+  ]},
+  proxmox: { title:'Proxmox', vms:[
+    {name:'pve-node-01',    id:201, tag:'tag-pve', tl:'Proxmox', cpu:55, ram:68, status:'run'},
+    {name:'pve-node-02',    id:202, tag:'tag-pve', tl:'Proxmox', cpu:40, ram:72, status:'run'},
+    {name:'pve-backup-vm',  id:203, tag:'tag-pve', tl:'Proxmox', cpu:5,  ram:20, status:'stop'},
+  ]},
+  vps: { title:'VPS', vms:[
+    {name:'vps-api-synapse', id:301, tag:'tag-vps', tl:'VPS', cpu:70, ram:65, status:'warn'},
+    {name:'vps-backup-mbld', id:302, tag:'tag-vps', tl:'VPS', cpu:10, ram:25, status:'run'},
+    {name:'vps-portal-mbld', id:303, tag:'tag-vps', tl:'VPS', cpu:30, ram:40, status:'run'},
+  ]},
+  firewall: { title:'Firewalls', vms:[
+    {name:'fw-fiduval-opnsense', id:401, tag:'tag-fw', tl:'Firewall', cpu:8,  ram:22, status:'run'},
+    {name:'fw-mbld-pfsense',     id:402, tag:'tag-fw', tl:'Firewall', cpu:12, ram:18, status:'run'},
+  ]}
+};
+
+/* ════════════════════════════════════════════════
+   HELPERS
+════════════════════════════════════════════════ */
+function barColor(v){ return v>85?'#ef4444': v>65?'#f59e0b':'#22c55e'; }
+function statusColor(s){ return {run:'#22c55e',stop:'#555',err:'#ef4444',warn:'#f59e0b'}[s]||'#555'; }
+function statusLabel(s){ return {run:'Running',stop:'Stopped',err:'Error',warn:'Warning'}[s]||s; }
+
+function makeRing(pct, color, size=38){
+  const r=15, circ=2*Math.PI*r, dash=(pct/100*circ).toFixed(1), gap=(circ-pct/100*circ).toFixed(1);
+  return `<div class="ring" style="width:${size}px;height:${size}px">
+    <svg viewBox="0 0 36 36">
+      <circle cx="18" cy="18" r="${r}" fill="none" stroke="#252830" stroke-width="3"/>
+      <circle cx="18" cy="18" r="${r}" fill="none" stroke="${color}" stroke-width="3"
+        stroke-dasharray="${dash} ${gap}" stroke-linecap="round"/>
+    </svg>
+    <div class="pct">${pct}%</div>
+  </div>`;
+}
+
+function vmCard(vm){
+  const sc = statusColor(vm.status), sl = statusLabel(vm.status);
+  const cls = vm.status==='err' ? 'vm-card error' : 'vm-card';
+  return `
+  <div class="${cls}">
+    <div class="vm-card-hd">
+      <div class="vm-check"></div>
+      <i class="ti ti-device-desktop vm-type-icon"></i>
+      <div><div class="vm-name">${vm.name}</div><div class="vm-id">ID: ${vm.id}</div></div>
+      <div class="vm-online-dot" style="background:${sc}"></div>
+    </div>
+    <div class="vm-meta">
+      <div class="vm-meta-row"><span class="vm-meta-key">Status</span><span class="vm-meta-val ${vm.status}">${sl}</span></div>
+      <div class="tags"><span class="tag ${vm.tag}">${vm.tl}</span></div>
+      <div class="vm-meta-row"><span class="vm-meta-key">RAM</span><span class="vm-meta-val">${vm.ram}%</span></div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${vm.ram}%;background:${barColor(vm.ram)}"></div></div>
+      <div class="vm-meta-row"><span class="vm-meta-key">CPU</span><span class="vm-meta-val">${vm.cpu}%</span></div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${vm.cpu}%;background:${barColor(vm.cpu)}"></div></div>
+    </div>
+    <div class="vm-actions">
+      <button class="vm-act-btn" title="Power"><i class="ti ti-power"></i></button>
+      <button class="vm-act-btn" title="Restart"><i class="ti ti-refresh"></i></button>
+      <button class="vm-act-btn" title="Console"><i class="ti ti-terminal"></i></button>
+      <button class="vm-act-btn" title="Settings"><i class="ti ti-settings"></i></button>
+      <button class="vm-act-btn" title="Migrate"><i class="ti ti-arrow-right"></i></button>
+      <button class="vm-act-btn vm-more" title="More"><i class="ti ti-dots"></i></button>
+    </div>
+  </div>`;
+}
+
+function projCard(p, cid, idx){
+  const tagLabel = {os:'VM OpenStack',pve:'Proxmox',vps:'VPS',fw:'Firewall'}[p.tag.replace('tag-','')] || p.tag;
+  return `
+  <div class="proj-card" onclick="openProject('${cid}',${idx})">
+    <div class="proj-icon" style="background:${p.bg}"><i class="ti ${p.icon}" style="color:#aaa;font-size:15px"></i></div>
+    <div><div class="proj-name">${p.name}</div><div class="proj-sub">${p.sub}</div></div>
+    <div class="proj-right">
+      <span class="tag ${p.tag}">${tagLabel}</span>
+      <span style="font-size:10px;color:${p.status==='run'?'#22c55e':'#f59e0b'}">${p.status==='run'?'OK':'Warning'}</span>
+      <i class="ti ti-chevron-right" style="font-size:12px;color:#444"></i>
+    </div>
+  </div>`;
+}
+
+/* ════════════════════════════════════════════════
+   NAVIGATION
+════════════════════════════════════════════════ */
+let openClients = {};
+
+function hideAll(){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('show'));
+  document.getElementById('sub-tab-bar').classList.remove('show');
+}
+
+function setActive(sbId){
+  document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
+  if(sbId) document.getElementById(sbId)?.classList.add('active');
+}
+
+function switchTab(t){
+  hideAll();
+  document.querySelectorAll('.tab').forEach(tb=>tb.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  if(t==='resources'){
+    document.getElementById('sub-tab-bar').classList.add('show');
+    buildResourcesGrid();
+    show('view-resources');
+  } else if(t==='overview'){
+    show('view-all-overview');
+  }
+}
+
+function switchSubTab(t){
+  document.querySelectorAll('.sub-tab').forEach(tb=>tb.classList.remove('active'));
+  document.getElementById('stab-'+t).classList.add('active');
+}
+
+function filterFb(btn){
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function show(id){ document.getElementById(id).classList.add('show'); }
+
+function openView(view, param){
+  hideAll();
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-overview').classList.add('active');
+
+  if(view==='all-overview'){ setActive('sb-all'); show('view-all-overview'); return; }
+
+  if(view==='machines'){
+    const sbMap={openstack:'sb-os',proxmox:'sb-pve',vps:'sb-vps',firewall:'sb-fw'};
+    setActive(sbMap[param]);
+    const m=MACHINES[param];
+    document.getElementById('vm-title').textContent=m.title+' · '+m.vms.length+' machines';
+    document.getElementById('vm-grid-list').innerHTML=m.vms.map(vmCard).join('');
+    show('view-machines'); return;
+  }
+
+  if(view==='client-overview'){
+    setActive('sb-'+param);
+    const c=CLIENTS[param];
+    // header
+    document.getElementById('cov-header').innerHTML=`
+      <div class="overview-icon" style="background:${c.color}">${c.initials}</div>
+      <div>
+        <div class="overview-title">${c.name}</div>
+        <div class="overview-sub">${c.ip} · ${c.vms} machines · ${c.projets.length} projets</div>
+      </div>
+      <div style="margin-left:auto">
+        ${c.alerts>0
+          ? `<span class="pill pill-alert"><i class="ti ti-bell" style="font-size:10px"></i> ${c.alerts} alertes</span>`
+          : `<span class="pill pill-live"><i class="ti ti-circle-check" style="font-size:10px"></i> Tout OK</span>`}
+      </div>`;
+    // stats
+    document.getElementById('cov-stats').innerHTML=`
+      <div class="stat-box"><i class="ti ti-server"></i><div><div class="stat-val">${c.vms}</div><div class="stat-label">Machines</div></div></div>
+      <div class="stat-box"><i class="ti ti-folders"></i><div><div class="stat-val">${c.projets.length}</div><div class="stat-label">Projets</div></div></div>
+      <div class="stat-box">${makeRing(c.cpu,barColor(c.cpu))}<div><div class="stat-val">${c.cpu}%</div><div class="stat-label">CPU avg</div></div></div>
+      <div class="stat-box">${makeRing(c.ram,barColor(c.ram))}<div><div class="stat-val">${c.ram}%</div><div class="stat-label">RAM avg</div></div></div>`;
+    // projets
+    document.getElementById('cov-proj-list').innerHTML=c.projets.map((p,i)=>projCard(p,param,i)).join('');
+    // alertes
+    document.getElementById('cov-alerts').innerHTML=c.alerts===0
+      ? '<div style="font-size:10px;color:#444;padding:6px 0">Aucune alerte active</div>'
+      : `<div class="alert-item crit"><i class="ti ti-alert-circle" style="font-size:13px;color:#ef4444;margin-top:1px"></i><div><div class="alert-text" style="font-weight:500">RAM critique — db-prod-master (91%)</div><div class="alert-meta">il y a 3 min</div></div></div>
+         <div class="alert-item warn"><i class="ti ti-alert-triangle" style="font-size:13px;color:#f59e0b;margin-top:1px"></i><div><div class="alert-text">CPU élevé — api-gateway-02</div><div class="alert-meta">il y a 28 min</div></div></div>`;
+    show('view-client-overview'); return;
+  }
+
+  if(view==='client-projets'){
+    setActive('sb-'+param);
+    const c=CLIENTS[param];
+    document.getElementById('vcp-title').textContent=c.name+' · '+c.projets.length+' projets';
+    document.getElementById('vcp-list').innerHTML=c.projets.map((p,i)=>projCard(p,param,i)).join('');
+    show('view-client-projets'); return;
+  }
+}
+
+function openProject(cid, idx){
+  hideAll();
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-overview').classList.add('active');
+  setActive('sb-'+cid);
+  const c=CLIENTS[cid], p=c.projets[idx];
+  document.getElementById('vproj-stats').innerHTML=`
+    <div class="stat-box"><i class="ti ti-server"></i><div><div class="stat-val">6</div><div class="stat-label">Instances</div></div></div>
+    <div class="stat-box">${makeRing(c.cpu,barColor(c.cpu))}<div><div class="stat-val">${c.cpu}%</div><div class="stat-label">CPU</div></div></div>
+    <div class="stat-box">${makeRing(c.ram,barColor(c.ram))}<div><div class="stat-val">${c.ram}%</div><div class="stat-label">RAM</div></div></div>
+    <div class="stat-box"><i class="ti ti-bell" style="color:${c.alerts?'#f87171':'#22c55e'}"></i><div><div class="stat-val" style="color:${c.alerts?'#f87171':'#22c55e'}">${c.alerts}</div><div class="stat-label">Alertes</div></div></div>`;
+  document.getElementById('vproj-vms').innerHTML=MACHINES.openstack.vms.slice(0,3).map(vmCard).join('');
+  show('view-project');
+}
+
+function toggleClient(id){
+  openClients[id]=!openClients[id];
+  const ch=document.getElementById('ch-'+id);
+  ch.classList.toggle('open', openClients[id]);
+  if(openClients[id]) openView('client-overview', id);
+}
+
+function buildResourcesGrid(){
+  const allVms=[...MACHINES.openstack.vms,...MACHINES.proxmox.vms,...MACHINES.vps.vms,...MACHINES.firewall.vms];
+  document.getElementById('resources-grid').innerHTML=allVms.slice(0,6).map(vmCard).join('');
+}
+
+/* ════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════ */
+function init(){
+  // Build cluster cards
+  const grid=document.getElementById('clusters-grid');
+  const borderColors={mbld:'#22c55e', fiduval:'#22c55e', synapse:'#f59e0b', kantox:'#22c55e'};
+  grid.innerHTML=Object.entries(CLIENTS).slice(0,4).map(([id,c])=>`
+    <div class="cluster-card" style="border-left-color:${borderColors[id]}" onclick="openView('client-overview','${id}')">
+      <div class="cluster-card-hd">
+        <div class="cluster-initials" style="background:${c.color}">${c.initials}</div>
+        <div><div class="cluster-name">${c.name}</div><div class="cluster-ip">${c.ip}</div></div>
+        <div class="cluster-score">${Math.round((100-c.cpu+100-c.ram)/2)}%</div>
+      </div>
+      <div class="cluster-stats">
+        <div><div class="cs-val">${c.projets.length}/${c.projets.length}</div><div class="cs-label">Projets</div></div>
+        <div><div class="cs-val" style="color:${barColor(c.cpu)}">${c.cpu}%</div><div class="cs-label">CPU</div></div>
+        <div><div class="cs-val" style="color:${barColor(c.ram)}">${c.ram}%</div><div class="cs-label">RAM</div></div>
+        <div><div class="cs-val">${c.vms}</div><div class="cs-label">VMs</div></div>
+      </div>
+      <div class="cluster-footer">Updated: 12s ago →</div>
+    </div>`).join('');
+
+  // Build global rings
+  [
+    {id:'ring-cpu-global', pct:58, color:'#e8690a'},
+    {id:'ring-ram-global', pct:74, color:'#f59e0b'},
+    {id:'ring-sto-global', pct:45, color:'#22c55e'},
+  ].forEach(({id,pct,color})=>{
+    document.getElementById(id).outerHTML = makeRing(pct,color).replace('class="ring"','class="ring" id="'+id+'"');
+  });
+  // Rebuild properly
+  document.querySelectorAll('#ring-cpu-global,#ring-ram-global,#ring-sto-global').forEach(el=>{
+    const pct = el.id==='ring-cpu-global'?58:el.id==='ring-ram-global'?74:45;
+    const col = el.id==='ring-cpu-global'?'#e8690a':el.id==='ring-ram-global'?'#f59e0b':'#22c55e';
+    const r=15,circ=2*Math.PI*r,dash=(pct/100*circ).toFixed(1),gap=(circ-pct/100*circ).toFixed(1);
+    el.innerHTML=`<svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="${r}" fill="none" stroke="#252830" stroke-width="3"/><circle cx="18" cy="18" r="${r}" fill="none" stroke="${col}" stroke-width="3" stroke-dasharray="${dash} ${gap}" stroke-linecap="round"/></svg><div class="pct">${pct}%</div>`;
+  });
+}
+
+init();
+</script>
+</body>
+</html>
