@@ -530,6 +530,7 @@
     ════════════════════════════════════════ -->
     <div class="main">
 
+      <!-- BLOC VISUEL: navigation primaire par onglets -->
       <!-- Tab bar -->
       <div class="tab-bar" id="tab-bar">
         <div class="tab active" id="tab-overview"    onclick="switchTab('overview')">  <i class="ti ti-layout-dashboard"></i> Overview</div>
@@ -541,6 +542,7 @@
         <div class="tab"        id="tab-settings"    onclick="switchTab('settings')">  <i class="ti ti-settings"></i> Settings</div>
       </div>
 
+      <!-- BLOC VISUEL: sous-navigation contextuelle de Resources -->
       <!-- Sub tab bar (Resources only) -->
       <div class="sub-tab-bar" id="sub-tab-bar">
         <div class="sub-tab active" id="stab-rm"   onclick="switchSubTab('rm')">  <i class="ti ti-server"></i> Resource Management</div>
@@ -555,6 +557,7 @@
         <!-- ── VIEW: All clients overview ── -->
         <div id="view-all-overview" class="view show">
 
+          <!-- BLOC VISUEL: hero/header de vue -->
           <div class="overview-header">
             <div class="overview-icon"><i class="ti ti-layout-grid"></i></div>
             <div>
@@ -566,6 +569,7 @@
             </div>
           </div>
 
+          <!-- BLOC VISUEL: rangée de KPI globaux -->
           <div class="stats-row">
             <div class="stat-box"><i class="ti ti-building-community"></i><div><div class="stat-val">4</div><div class="stat-label">Clients</div></div></div>
             <div class="stat-box"><i class="ti ti-server"></i><div><div class="stat-val">50</div><div class="stat-label">Machines</div></div></div>
@@ -584,10 +588,12 @@
             <div class="stat-box"><i class="ti ti-bell" style="color:#f87171"></i><div><div class="stat-val" style="color:#f87171">3</div><div class="stat-label">Alerts</div></div></div>
           </div>
 
+          <!-- BLOC VISUEL: grille des cartes clients/clusters -->
           <div class="grid-2" id="clusters-grid">
             <!-- Injected by JS -->
           </div>
 
+          <!-- BLOC VISUEL: tableau des top resources -->
           <div class="card">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
               <div>
@@ -632,6 +638,7 @@
         <!-- ── VIEW: Clients list (tab Clients) ── -->
         <div id="view-clients" class="view">
 
+          <!-- BLOC VISUEL: header de la section Clients -->
           <div class="overview-header">
             <div class="overview-icon"><i class="ti ti-building-community"></i></div>
             <div>
@@ -644,6 +651,7 @@
             </div>
           </div>
 
+          <!-- BLOC VISUEL: barre de recherche, filtres et toggle d'affichage -->
           <!-- Search + filter -->
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
             <div class="search-bar" style="flex:1;min-width:200px">
@@ -661,6 +669,7 @@
             </div>
           </div>
 
+          <!-- BLOC VISUEL: KPI de synthèse clients -->
           <!-- Stats row clients -->
           <div class="stats-row">
             <div class="stat-box"><i class="ti ti-building-community"></i><div><div class="stat-val">4</div><div class="stat-label">Clients</div></div></div>
@@ -669,14 +678,20 @@
             <div class="stat-box"><i class="ti ti-bell" style="color:#f87171"></i><div><div class="stat-val" style="color:#f87171">3</div><div class="stat-label">Alertes</div></div></div>
           </div>
 
+          <!-- BLOC VISUEL: grille/liste principale des clients -->
           <!-- Clients grid -->
           <div id="clients-main-grid" class="grid-2"></div>
         </div>
 
         <!-- ── VIEW: Client overview ── -->
         <div id="view-client-overview" class="view">
+          <!-- BLOC VISUEL: header client -->
           <div class="overview-header" id="cov-header"></div>
+
+          <!-- BLOC VISUEL: KPI du client -->
           <div class="stats-row" id="cov-stats"></div>
+
+          <!-- BLOC VISUEL: colonne projets + colonne alertes -->
           <div class="grid-2">
             <div style="display:flex;flex-direction:column;gap:8px" id="cov-proj-list"></div>
             <div class="card">
@@ -688,18 +703,23 @@
 
         <!-- ── VIEW: Client projects ── -->
         <div id="view-client-projets" class="view">
+          <!-- BLOC VISUEL: en-tête texte + liste des projets -->
           <div style="font-size:13px;font-weight:500;color:#fff;margin-bottom:4px" id="vcp-title"></div>
           <div style="display:flex;flex-direction:column;gap:8px" id="vcp-list"></div>
         </div>
 
         <!-- ── VIEW: Project dashboard ── -->
         <div id="view-project" class="view">
+          <!-- BLOC VISUEL: KPI du projet -->
           <div class="stats-row" id="vproj-stats"></div>
+
+          <!-- BLOC VISUEL: grille des VMs du projet -->
           <div class="grid-3" id="vproj-vms"></div>
         </div>
 
         <!-- ── VIEW: Resources (global) ── -->
         <div id="view-resources" class="view">
+          <!-- BLOC VISUEL: barre de recherche et filtres ressources -->
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
             <div class="search-bar" style="flex:1;min-width:200px">
               <i class="ti ti-search" style="font-size:13px;color:#444"></i>
@@ -718,7 +738,11 @@
               <button class="vt-btn" title="Aperçu"><i class="ti ti-eye"></i></button>
             </div>
           </div>
+
+          <!-- BLOC VISUEL: grille des resources -->
           <div class="grid-3" id="resources-grid"></div>
+
+          <!-- BLOC VISUEL: pied de section avec résumé + actions de création -->
           <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;font-size:10px;color:var(--text-muted)">
             <span>Showing 1–5 of 13 resources</span>
             <div style="display:flex;gap:8px">
@@ -730,7 +754,10 @@
 
         <!-- ── VIEW: Machines (filtered by type) ── -->
         <div id="view-machines" class="view">
+          <!-- BLOC VISUEL: titre de la famille de machines -->
           <div style="font-size:13px;font-weight:500;color:#fff;margin-bottom:4px" id="vm-title"></div>
+
+          <!-- BLOC VISUEL: grille des cartes machine -->
           <div class="grid-3" id="vm-grid-list"></div>
         </div>
 

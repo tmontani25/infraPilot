@@ -1,1 +1,33 @@
 /* Design system — variables CSS du mockup */
+
+:root {
+    --bg:           #111214;
+    --surface:      #1e2126;
+    --sidebar:      #1a1d21;
+    --input:        #252830;
+    --border:       #2a2d32;
+    --border-hover: #3a3d42;
+    --accent:       #e8690a;
+    --accent-hover: #d15e08;
+    --text-primary: #ffffff;
+    --text-secondary: #888888;
+    --text-muted:   #555555;
+    --green:        #22c55e;
+    --yellow:       #f59e0b;
+    --red:          #ef4444;
+    --blue:         #60a5fa;
+    --purple:       #a78bfa;
+
+    /* Tags */
+    --tag-os-bg:    #1e3a5f; --tag-os-text:  #60a5fa;
+    --tag-pve-bg:   #2e1f5e; --tag-pve-text: #a78bfa;
+    --tag-vps-bg:   #1a3a2a; --tag-vps-text: #4ade80;
+    --tag-fw-bg:    #3a1a1a; --tag-fw-text:  #f87171;
+    --tag-lxc-bg:   #1a2a3a; --tag-lxc-text: #38bdf8;
+  }
+   html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); }
+
+  /* ── App shell ── */
+  .app { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+  .body { display: flex; flex: 1; overflow: hidden; }
+
