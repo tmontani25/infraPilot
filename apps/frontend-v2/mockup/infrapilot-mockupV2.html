@@ -466,87 +466,21 @@
     ════════════════════════════════════════ -->
     <nav class="sidebar">
 
-      <!-- Section Clients -->
-      <div class="sb-section-hd">
-        Clients <i class="ti ti-plus" title="Ajouter un client"></i>
+      <!-- Navigation principale -->
+      <div class="sb-item active" id="sb-overview" onclick="navSidebar('overview')">
+        <i class="ti ti-layout-dashboard"></i>
+        <div class="sb-info"><div class="sb-name">Overview</div></div>
       </div>
 
-      <div class="sb-item active" id="sb-all" onclick="openView('all-overview')">
-        <i class="ti ti-layout-grid"></i>
+      <div class="sb-item" id="sb-clients-nav" onclick="navSidebar('clients')">
+        <i class="ti ti-building-community"></i>
         <div class="sb-info">
-          <div class="sb-name">All Clients</div>
-          <div class="sb-ip">4 clients</div>
+          <div class="sb-name">Clients</div>
+          <div class="sb-ip">4 clients · 3 alertes</div>
         </div>
+        <span class="sb-badge alert">3</span>
       </div>
 
-      <!-- Client : Étude MBLD -->
-      <div class="sb-item" id="sb-mbld" onclick="toggleClient('mbld')">
-        <span class="sb-dot on"></span>
-        <div class="sb-info">
-          <div class="sb-name">Étude MBLD</div>
-          <div class="sb-ip">etude-mbld.ch</div>
-        </div>
-        <span class="sb-badge auto">Auto</span>
-        <div class="sb-actions">
-          <button class="sb-action-btn" title="Supprimer"><i class="ti ti-trash"></i></button>
-          <button class="sb-action-btn" title="Config"><i class="ti ti-settings"></i></button>
-        </div>
-      </div>
-      <div class="sb-children" id="ch-mbld">
-        <div class="sb-child" onclick="openView('client-overview','mbld')"><i class="ti ti-layout-dashboard"></i> Vue d'ensemble</div>
-        <div class="sb-child" onclick="openView('client-projets','mbld')"><i class="ti ti-folders"></i> Projets</div>
-      </div>
-
-      <!-- Client : Fiduciaire Val -->
-      <div class="sb-item" id="sb-fiduval" onclick="toggleClient('fiduval')">
-        <span class="sb-dot on"></span>
-        <div class="sb-info">
-          <div class="sb-name">Fiduciaire Val</div>
-          <div class="sb-ip">fidval.ch</div>
-        </div>
-        <div class="sb-actions">
-          <button class="sb-action-btn" title="Supprimer"><i class="ti ti-trash"></i></button>
-          <button class="sb-action-btn" title="Config"><i class="ti ti-settings"></i></button>
-        </div>
-      </div>
-      <div class="sb-children" id="ch-fiduval">
-        <div class="sb-child" onclick="openView('client-overview','fiduval')"><i class="ti ti-layout-dashboard"></i> Vue d'ensemble</div>
-        <div class="sb-child" onclick="openView('client-projets','fiduval')"><i class="ti ti-folders"></i> Projets</div>
-      </div>
-
-      <!-- Client : Synapse Tech -->
-      <div class="sb-item" id="sb-synapse" onclick="toggleClient('synapse')">
-        <span class="sb-dot on"></span>
-        <div class="sb-info">
-          <div class="sb-name">Synapse Tech</div>
-          <div class="sb-ip">synapse.io</div>
-        </div>
-        <div class="sb-actions">
-          <button class="sb-action-btn" title="Supprimer"><i class="ti ti-trash"></i></button>
-        </div>
-      </div>
-      <div class="sb-children" id="ch-synapse">
-        <div class="sb-child" onclick="openView('client-overview','synapse')"><i class="ti ti-layout-dashboard"></i> Vue d'ensemble</div>
-        <div class="sb-child" onclick="openView('client-projets','synapse')"><i class="ti ti-folders"></i> Projets</div>
-      </div>
-
-      <!-- Client : Kantox SA -->
-      <div class="sb-item" id="sb-kantox" onclick="toggleClient('kantox')">
-        <span class="sb-dot off"></span>
-        <div class="sb-info">
-          <div class="sb-name">Kantox SA</div>
-          <div class="sb-ip">kantox.com</div>
-        </div>
-        <div class="sb-actions">
-          <button class="sb-action-btn" title="Config"><i class="ti ti-settings"></i></button>
-        </div>
-      </div>
-      <div class="sb-children" id="ch-kantox">
-        <div class="sb-child" onclick="openView('client-overview','kantox')"><i class="ti ti-layout-dashboard"></i> Vue d'ensemble</div>
-        <div class="sb-child" onclick="openView('client-projets','kantox')"><i class="ti ti-folders"></i> Projets</div>
-      </div>
-
-      <div class="sb-add"><i class="ti ti-plus"></i> Add Client</div>
       <div class="sb-divider"></div>
 
       <!-- Section Machines -->
@@ -693,6 +627,50 @@
               </tbody>
             </table>
           </div>
+        </div>
+
+        <!-- ── VIEW: Clients list (tab Clients) ── -->
+        <div id="view-clients" class="view">
+
+          <div class="overview-header">
+            <div class="overview-icon"><i class="ti ti-building-community"></i></div>
+            <div>
+              <div class="overview-title">Clients</div>
+              <div class="overview-sub">Gestion de tous vos clients managés</div>
+            </div>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+              <span class="pill pill-live"><i class="ti ti-circle-check" style="font-size:10px"></i> 4 actifs</span>
+              <button class="tb-add" style="height:30px" onclick=""><i class="ti ti-plus"></i> Add Client</button>
+            </div>
+          </div>
+
+          <!-- Search + filter -->
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <div class="search-bar" style="flex:1;min-width:200px">
+              <i class="ti ti-search" style="font-size:13px;color:#444"></i>
+              <input placeholder="Rechercher un client, domaine, IP..." id="clients-search" oninput="filterClients()">
+            </div>
+            <div class="filter-row">
+              <button class="fb active" onclick="filterFbClients(this,'all')">Tous</button>
+              <button class="fb" onclick="filterFbClients(this,'ok')">OK</button>
+              <button class="fb" onclick="filterFbClients(this,'alert')">Alertes</button>
+            </div>
+            <div class="view-toggle">
+              <button class="vt-btn active" title="Grille" onclick="setClientsView('grid',this)"><i class="ti ti-layout-grid"></i></button>
+              <button class="vt-btn" title="Liste" onclick="setClientsView('list',this)"><i class="ti ti-list"></i></button>
+            </div>
+          </div>
+
+          <!-- Stats row clients -->
+          <div class="stats-row">
+            <div class="stat-box"><i class="ti ti-building-community"></i><div><div class="stat-val">4</div><div class="stat-label">Clients</div></div></div>
+            <div class="stat-box"><i class="ti ti-server"></i><div><div class="stat-val">50</div><div class="stat-label">Machines totales</div></div></div>
+            <div class="stat-box"><i class="ti ti-folders"></i><div><div class="stat-val">9</div><div class="stat-label">Projets actifs</div></div></div>
+            <div class="stat-box"><i class="ti ti-bell" style="color:#f87171"></i><div><div class="stat-val" style="color:#f87171">3</div><div class="stat-label">Alertes</div></div></div>
+          </div>
+
+          <!-- Clients grid -->
+          <div id="clients-main-grid" class="grid-2"></div>
         </div>
 
         <!-- ── VIEW: Client overview ── -->
@@ -903,6 +881,24 @@ function setActive(sbId){
   if(sbId) document.getElementById(sbId)?.classList.add('active');
 }
 
+function navSidebar(dest){
+  // Update sidebar active state
+  document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
+  if(dest==='overview') document.getElementById('sb-overview')?.classList.add('active');
+  if(dest==='clients')  document.getElementById('sb-clients-nav')?.classList.add('active');
+
+  hideAll();
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-overview').classList.add('active');
+
+  if(dest==='overview'){
+    show('view-all-overview');
+  } else if(dest==='clients'){
+    buildClientsGrid(clientsFilter, '');
+    show('view-clients');
+  }
+}
+
 function switchTab(t){
   hideAll();
   document.querySelectorAll('.tab').forEach(tb=>tb.classList.remove('active'));
@@ -913,7 +909,115 @@ function switchTab(t){
     show('view-resources');
   } else if(t==='overview'){
     show('view-all-overview');
+  } else if(t==='clients'){
+    buildClientsGrid();
+    show('view-clients');
   }
+}
+
+let clientsFilter = 'all';
+
+function buildClientsGrid(filter='all', search=''){
+  const container = document.getElementById('clients-main-grid');
+  const borderColors = {mbld:'#22c55e', fiduval:'#22c55e', synapse:'#f59e0b', kantox:'#22c55e'};
+  const isListView = container.classList.contains('clients-list');
+
+  const entries = Object.entries(CLIENTS).filter(([id, c]) => {
+    const matchFilter = filter==='all' || (filter==='ok' && c.alerts===0) || (filter==='alert' && c.alerts>0);
+    const matchSearch = !search || c.name.toLowerCase().includes(search.toLowerCase()) || c.ip.toLowerCase().includes(search.toLowerCase());
+    return matchFilter && matchSearch;
+  });
+
+  if(isListView){
+    container.innerHTML = `<table class="tr-table" style="width:100%">
+      <thead><tr>
+        <th>Client</th><th>Domaine</th><th>Machines</th><th>Projets</th>
+        <th>CPU avg</th><th>RAM avg</th><th>Alertes</th><th>Statut</th>
+      </tr></thead>
+      <tbody>
+      ${entries.map(([id,c])=>`
+        <tr style="cursor:pointer" onclick="openClientFromTab('${id}')">
+          <td><div style="display:flex;align-items:center;gap:8px">
+            <div style="width:26px;height:26px;border-radius:6px;background:${c.color};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff;flex-shrink:0">${c.initials}</div>
+            <div style="color:#fff;font-size:11px;font-weight:500">${c.name}</div>
+          </div></td>
+          <td style="font-size:10px">${c.ip}</td>
+          <td>${c.vms}</td>
+          <td>${c.projets.length}</td>
+          <td><span style="color:${barColor(c.cpu)}">${c.cpu}%</span></td>
+          <td><span style="color:${barColor(c.ram)}">${c.ram}%</span></td>
+          <td>${c.alerts>0?`<span style="color:#f87171">${c.alerts}</span>`:'<span style="color:#22c55e">0</span>'}</td>
+          <td>${c.alerts>0
+            ? '<span class="status-pill" style="background:#2b1a0d;color:#f59e0b">⚠ Alert</span>'
+            : '<span class="status-pill sp-run">OK</span>'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  } else {
+    container.innerHTML = entries.map(([id,c])=>`
+      <div class="cluster-card" style="border-left-color:${borderColors[id]};cursor:pointer" onclick="openClientFromTab('${id}')">
+        <div class="cluster-card-hd">
+          <div class="cluster-initials" style="background:${c.color}">${c.initials}</div>
+          <div>
+            <div class="cluster-name">${c.name}</div>
+            <div class="cluster-ip">${c.ip}</div>
+          </div>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+            ${c.alerts>0
+              ? `<span class="pill pill-alert"><i class="ti ti-bell" style="font-size:9px"></i> ${c.alerts}</span>`
+              : `<span class="pill pill-live"><i class="ti ti-circle-check" style="font-size:9px"></i> OK</span>`}
+            <span class="cluster-score">${Math.round((100-c.cpu+100-c.ram)/2)}%</span>
+          </div>
+        </div>
+        <div class="cluster-stats">
+          <div><div class="cs-val">${c.projets.length}</div><div class="cs-label">Projets</div></div>
+          <div><div class="cs-val" style="color:${barColor(c.cpu)}">${c.cpu}%</div><div class="cs-label">CPU</div></div>
+          <div><div class="cs-val" style="color:${barColor(c.ram)}">${c.ram}%</div><div class="cs-label">RAM</div></div>
+          <div><div class="cs-val">${c.vms}</div><div class="cs-label">VMs</div></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="cluster-footer">Cliquer pour voir le détail →</div>
+          <div style="display:flex;gap:4px">
+            ${c.projets.map(p=>`<span class="tag ${p.tag}" style="font-size:8px">${p.name.split(' ')[0]}</span>`).join('')}
+          </div>
+        </div>
+      </div>`).join('');
+  }
+}
+
+function filterClients(){
+  const search = document.getElementById('clients-search').value;
+  buildClientsGrid(clientsFilter, search);
+}
+
+function filterFbClients(btn, filter){
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  clientsFilter = filter;
+  filterClients();
+}
+
+function setClientsView(mode, btn){
+  document.querySelectorAll('.view-toggle .vt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const grid = document.getElementById('clients-main-grid');
+  if(mode==='list'){
+    grid.classList.remove('grid-2');
+    grid.classList.add('clients-list');
+  } else {
+    grid.classList.add('grid-2');
+    grid.classList.remove('clients-list');
+  }
+  buildClientsGrid(clientsFilter, document.getElementById('clients-search')?.value||'');
+}
+
+function openClientFromTab(id){
+  hideAll();
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-overview').classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
+  document.getElementById('sb-clients-nav')?.classList.add('active');
+  openView('client-overview', id);
 }
 
 function switchSubTab(t){
@@ -933,7 +1037,7 @@ function openView(view, param){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-overview').classList.add('active');
 
-  if(view==='all-overview'){ setActive('sb-all'); show('view-all-overview'); return; }
+  if(view==='all-overview'){ setActive('sb-overview'); show('view-all-overview'); return; }
 
   if(view==='machines'){
     const sbMap={openstack:'sb-os',proxmox:'sb-pve',vps:'sb-vps',firewall:'sb-fw'};
@@ -945,7 +1049,7 @@ function openView(view, param){
   }
 
   if(view==='client-overview'){
-    setActive('sb-'+param);
+    setActive('sb-clients-nav');
     const c=CLIENTS[param];
     // header
     document.getElementById('cov-header').innerHTML=`
@@ -976,7 +1080,7 @@ function openView(view, param){
   }
 
   if(view==='client-projets'){
-    setActive('sb-'+param);
+    setActive('sb-clients-nav');
     const c=CLIENTS[param];
     document.getElementById('vcp-title').textContent=c.name+' · '+c.projets.length+' projets';
     document.getElementById('vcp-list').innerHTML=c.projets.map((p,i)=>projCard(p,param,i)).join('');
@@ -1019,7 +1123,7 @@ function init(){
   const grid=document.getElementById('clusters-grid');
   const borderColors={mbld:'#22c55e', fiduval:'#22c55e', synapse:'#f59e0b', kantox:'#22c55e'};
   grid.innerHTML=Object.entries(CLIENTS).slice(0,4).map(([id,c])=>`
-    <div class="cluster-card" style="border-left-color:${borderColors[id]}" onclick="openView('client-overview','${id}')">
+    <div class="cluster-card" style="border-left-color:${borderColors[id]}" onclick="openClientFromTab('${id}')">
       <div class="cluster-card-hd">
         <div class="cluster-initials" style="background:${c.color}">${c.initials}</div>
         <div><div class="cluster-name">${c.name}</div><div class="cluster-ip">${c.ip}</div></div>
