@@ -1,4 +1,4 @@
-import './Topbar.css'
+import { IconSearch } from '@tabler/icons-react'
 
 export default function Topbar() {
   return (
@@ -11,7 +11,7 @@ export default function Topbar() {
         </div>
       </div>
       <div className="tb-search">
-        <i className="ti ti-search" />
+        <IconSearch size={13} color="#555" />
         <input placeholder="Search..." />
       </div>
       <div className="spacer" />
