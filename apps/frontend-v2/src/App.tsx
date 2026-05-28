@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar'
 import TabBar from './components/TabBar'
 import Dashboard from './pages/Dashboard'
 import Resources from './pages/Resources'
+import VMDetail from './pages/VMDetail'
 import Network from './pages/Network'
 import Datastore from './pages/Datastore'
 
@@ -19,6 +20,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/resources" element={<Resources />} />
+              <Route path="/resources/:id" element={<VMDetail />} />
               <Route path="/network" element={<Network />} />
               <Route path="/datastore" element={<Datastore />} />
               <Route path="*" element={<Navigate to="/" replace />} />

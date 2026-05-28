@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { IconPower, IconRefresh, IconPlayerStop, IconTrash } from '@tabler/icons-react'
 import { startVm, stopVm, rebootVm, deleteVm } from '../services/vms'
 import StatusPill from './ui/StatusPill'
@@ -11,9 +12,11 @@ interface VMCardProps {
 }
 
 export default function VMCard({ vm, onRefresh }: VMCardProps) {
+  const navigate = useNavigate()
   const [loading, setLoading] = useState<string | null>(null)
 
-  async function handleAction(action: string, fn: () => Promise<void>) {
+  async function handleAction(e: React.MouseEvent, action: string, fn: () => Promise<void>) {
+    e.stopPropagation()
     setLoading(action)
     try {
       await fn()
@@ -28,7 +31,11 @@ export default function VMCard({ vm, onRefresh }: VMCardProps) {
   const isStopped = vm.status === 'SHUTOFF'
 
   return (
-    <div className={`vm-card${isError ? ' error' : ''}`}>
+    <div
+      className={`vm-card${isError ? ' error' : ''}`}
+      style={{ cursor: 'pointer' }}
+      onClick={() => navigate(`/resources/${vm.id}`)}
+    >
       <div className="vm-card-hd">
         <div>
           <div className="vm-name">{vm.name}</div>
@@ -51,7 +58,7 @@ export default function VMCard({ vm, onRefresh }: VMCardProps) {
           className={`vm-act-btn${loading === 'start' ? ' loading' : ''}`}
           title="Start"
           disabled={isActive || loading !== null}
-          onClick={() => handleAction('start', () => startVm(vm.id))}
+          onClick={e => handleAction(e, 'start', () => startVm(vm.id))}
         >
           <IconPower size={12} />
         </button>
@@ -59,7 +66,7 @@ export default function VMCard({ vm, onRefresh }: VMCardProps) {
           className={`vm-act-btn${loading === 'stop' ? ' loading' : ''}`}
           title="Stop"
           disabled={isStopped || loading !== null}
-          onClick={() => handleAction('stop', () => stopVm(vm.id))}
+          onClick={e => handleAction(e, 'stop', () => stopVm(vm.id))}
         >
           <IconPlayerStop size={12} />
         </button>
@@ -67,7 +74,7 @@ export default function VMCard({ vm, onRefresh }: VMCardProps) {
           className={`vm-act-btn${loading === 'reboot' ? ' loading' : ''}`}
           title="Reboot"
           disabled={!isActive || loading !== null}
-          onClick={() => handleAction('reboot', () => rebootVm(vm.id))}
+          onClick={e => handleAction(e, 'reboot', () => rebootVm(vm.id))}
         >
           <IconRefresh size={12} />
         </button>
@@ -76,8 +83,9 @@ export default function VMCard({ vm, onRefresh }: VMCardProps) {
           title="Delete"
           disabled={loading !== null}
           style={{ marginLeft: 'auto', color: '#ef4444' }}
-          onClick={() => {
-            if (confirm(`Supprimer ${vm.name} ?`)) handleAction('delete', () => deleteVm(vm.id))
+          onClick={e => {
+            e.stopPropagation()
+            if (confirm(`Supprimer ${vm.name} ?`)) handleAction(e, 'delete', () => deleteVm(vm.id))
           }}
         >
           <IconTrash size={12} />

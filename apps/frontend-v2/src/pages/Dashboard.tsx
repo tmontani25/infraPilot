@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { IconServer, IconCircleCheck, IconPlayerStop, IconAlertCircle, IconRefresh } from '@tabler/icons-react'
 import { getVms } from '../services/vms'
+import { getProject } from '../services/health'
 import VMCard from '../components/VMCard'
 import RingGauge from '../components/ui/RingGauge'
 import type { VM } from '../types'
@@ -9,6 +10,11 @@ export default function Dashboard() {
   const [vms, setVms] = useState<VM[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [projectName, setProjectName] = useState<string | null>(null)
+
+  useEffect(() => {
+    getProject().then(p => setProjectName(p.project_name)).catch(() => {})
+  }, [])
 
   const fetchVms = useCallback(async () => {
     try {
@@ -40,7 +46,7 @@ export default function Dashboard() {
       <div className="overview-header">
         <div className="overview-icon"><IconServer size={20} /></div>
         <div>
-          <div className="overview-title">OpenStack Infomaniak</div>
+          <div className="overview-title">{projectName ?? 'OpenStack Infomaniak'}</div>
           <div className="overview-sub">Gestion des instances du projet</div>
         </div>
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>

@@ -12,6 +12,9 @@
   }
   .tb-brand { font-size: 13px; font-weight: 600; color: #fff; }
   .tb-sub   { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+  .tb-project { display: flex; align-items: center; gap: 6px; }
+  .tb-project-sep { color: var(--border); font-size: 16px; font-weight: 300; line-height: 1; }
+  .tb-project-name { font-size: 12px; font-weight: 500; color: #aaa; }
   .tb-search {
     flex: 1; max-width: 280px; height: 28px;
     background: var(--input); border: 1px solid var(--border); border-radius: 6px;

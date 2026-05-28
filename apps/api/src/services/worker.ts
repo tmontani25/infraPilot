@@ -20,6 +20,11 @@ async function workerFetch(url: string, options?: RequestInit) {
   }
 }
 
+// Project
+export async function getProject() {
+  return workerFetch(`${WORKER_URL}/project`)
+}
+
 // VMs
 export async function getVms() {
   return workerFetch(`${WORKER_URL}/vms`)

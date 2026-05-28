@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import Fastify from 'fastify'
 import { healthRoutes } from './routes/health.js'
+import { projectRoutes } from './routes/project.js'
 import { vmRoutes } from './routes/vms.js'
 import { ressourceRoutes } from './routes/ressource.js'
 import { volumeRoutes } from './routes/volumes.js'
@@ -21,6 +22,7 @@ server.register(cors, {
 
 server.register(vmRoutes, { prefix: '/api/v1' })
 server.register(healthRoutes, { prefix: '/api/v1' })
+server.register(projectRoutes, { prefix: '/api/v1' })
 server.register(ressourceRoutes, { prefix: '/api/v1' })
 server.register(volumeRoutes, { prefix: '/api/v1' })
 

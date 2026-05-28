@@ -268,6 +268,54 @@ html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; ba
   padding: 12px 14px; font-size: 11px; color: var(--red);
 }
 
+/* ── Network page ── */
+.net-vm-chip {
+  font-size: 9px; padding: 2px 7px; border-radius: 4px;
+  background: rgba(96,165,250,.1); color: var(--blue);
+  border: 1px solid rgba(96,165,250,.25); white-space: nowrap;
+}
+
+/* ── VM Detail page ── */
+.vm-detail-header {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.vm-detail-back {
+  display: flex; align-items: center; gap: 5px; font-size: 11px; color: #666;
+  background: transparent; border: 1px solid var(--border); border-radius: 5px;
+  padding: 0 10px; height: 26px; cursor: pointer; white-space: nowrap;
+  transition: all .1s;
+}
+.vm-detail-back:hover { color: #aaa; border-color: #444; }
+.vm-detail-icon {
+  width: 36px; height: 36px; border-radius: 8px; background: rgba(232,105,10,.15);
+  border: 1px solid rgba(232,105,10,.3);
+  display: flex; align-items: center; justify-content: center; color: var(--accent); flex-shrink: 0;
+}
+.vm-detail-name { font-size: 14px; font-weight: 500; color: #fff; }
+.vm-detail-id   { font-size: 9px; color: var(--text-muted); font-family: monospace; margin-top: 2px; }
+.vm-detail-actions { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+
+.vm-detail-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+}
+.vm-info-box {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 7px;
+  padding: 11px 13px;
+}
+.vm-info-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
+.vm-info-val   { font-size: 11px; color: #ccc; word-break: break-all; }
+.vm-info-val.mono { font-family: monospace; font-size: 10px; }
+
+.vm-addr-type {
+  font-size: 9px; padding: 1px 6px; border-radius: 3px;
+  background: var(--input); color: #888; border: 1px solid var(--border);
+}
+.vm-vol-count {
+  font-size: 9px; padding: 1px 6px; border-radius: 10px;
+  background: var(--input); color: #666;
+}
+
 /* ── Create VM Button ── */
 .btn-create-vm {
   height: 28px; padding: 0 12px; border-radius: 5px;

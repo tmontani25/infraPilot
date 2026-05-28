@@ -15,15 +15,14 @@ export default function Sidebar() {
   return (
     <nav className="sidebar">
       {NAV.map((item, i) => (
-        <>
+        <div key={item.path} style={{ display: 'contents' }}>
           {i === 1 && (
             <>
-              <div key="divider" className="sb-divider" />
-              <div key="section" className="sb-section-hd">OpenStack Infomaniak</div>
+              <div className="sb-divider" />
+              <div className="sb-section-hd">OpenStack Infomaniak</div>
             </>
           )}
           <div
-            key={item.path}
             className={`sb-item ${pathname === item.path ? 'active' : ''}`}
             onClick={() => navigate(item.path)}
           >
@@ -33,7 +32,7 @@ export default function Sidebar() {
               {item.sub && <div className="sb-ip">{item.sub}</div>}
             </div>
           </div>
-        </>
+        </div>
       ))}
 
       <div className="sb-bottom">

@@ -1,5 +1,15 @@
 import { api } from '../lib/apiClient'
-import type { VM } from '../types'
+import type { VM, VMDetail, Volume } from '../types'
+
+export async function getVm(id: string): Promise<VMDetail> {
+  const { data } = await api.get(`/vms/${id}`)
+  return data
+}
+
+export async function getVmVolumes(id: string): Promise<Volume[]> {
+  const { data } = await api.get(`/vms/${id}/volumes`)
+  return data
+}
 
 export async function getVms(): Promise<VM[]> {
   const { data } = await api.get('/vms')

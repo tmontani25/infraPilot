@@ -1,5 +1,7 @@
 from app.connection import conn
+from app.cache import ttl_cache
 
+@ttl_cache(ttl=30)
 def list_vms_service():
     servers = conn.compute.servers()
     return [{"id": vm.id, "name": vm.name, "status": vm.status} for vm in servers]
