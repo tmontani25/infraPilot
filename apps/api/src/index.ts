@@ -14,7 +14,10 @@ const server = Fastify({ logger: true })
 server.setErrorHandler(errorHandler)
 server.setNotFoundHandler(notFoundHandler)
 
-server.register(cors, { origin: true })
+server.register(cors, {
+  origin: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+})
 
 server.register(vmRoutes, { prefix: '/api/v1' })
 server.register(healthRoutes, { prefix: '/api/v1' })

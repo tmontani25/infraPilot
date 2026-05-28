@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
-import { IconSearch, IconRefresh } from '@tabler/icons-react'
+import { IconSearch, IconRefresh, IconPlus } from '@tabler/icons-react'
 import { getVms } from '../services/vms'
 import VMCard from '../components/VMCard'
+import CreateVMModal from '../components/CreateVMModal'
 import type { VM } from '../types'
 
 type Filter = 'all' | 'ACTIVE' | 'SHUTOFF' | 'ERROR'
@@ -12,6 +13,7 @@ export default function Resources() {
   const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
+  const [showCreate, setShowCreate] = useState(false)
 
   const fetchVms = useCallback(async () => {
     try {
@@ -44,6 +46,13 @@ export default function Resources() {
 
   return (
     <>
+      {showCreate && (
+        <CreateVMModal
+          onClose={() => setShowCreate(false)}
+          onCreated={fetchVms}
+        />
+      )}
+
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
         <div className="search-bar" style={{ flex: 1, minWidth: 200 }}>
           <IconSearch size={13} color="#444" />
@@ -66,6 +75,10 @@ export default function Resources() {
         </div>
         <button className="vm-act-btn" onClick={fetchVms} title="Rafraîchir" style={{ width: 28, height: 28 }}>
           <IconRefresh size={13} />
+        </button>
+        <button className="btn-create-vm" onClick={() => setShowCreate(true)}>
+          <IconPlus size={12} />
+          Créer une VM
         </button>
       </div>
 

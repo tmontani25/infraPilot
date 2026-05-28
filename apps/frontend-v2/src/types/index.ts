@@ -28,3 +28,24 @@ export interface SecurityGroup {
   name: string
   description: string
 }
+
+export interface Image {
+  id: string
+  name: string
+  status: string
+  disk_format: string
+  size: number
+}
+
+export interface Flavor {
+  id: string
+  name: string
+  vcpus: number
+  ram: number
+  disk: number
+}
+
+export interface Keypair {
+  name: string
+  fingerprint: string
+}

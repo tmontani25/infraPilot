@@ -20,11 +20,11 @@ def list_security_groups_service():
             "description": sg.description,
             "rules": [
                 {
-                    "protocol": r.protocol,
-                    "port_min": r.port_range_min,
-                    "port_max": r.port_range_max,
-                    "direction": r.direction,
-                    "remote_ip": r.remote_ip_prefix
+                    "protocol": r.get("protocol"),
+                    "port_min": r.get("port_range_min"),
+                    "port_max": r.get("port_range_max"),
+                    "direction": r.get("direction"),
+                    "remote_ip": r.get("remote_ip_prefix")
                 } for r in sg.security_group_rules
             ]
         } for sg in conn.network.security_groups()

@@ -267,3 +267,87 @@ html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; ba
   background: #2b1a1a; border: 1px solid #4a2a2a; border-radius: 7px;
   padding: 12px 14px; font-size: 11px; color: var(--red);
 }
+
+/* ── Create VM Button ── */
+.btn-create-vm {
+  height: 28px; padding: 0 12px; border-radius: 5px;
+  background: var(--accent); border: 1px solid var(--accent-hover);
+  font-size: 11px; font-weight: 500; color: #fff; cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+  transition: background .1s;
+  white-space: nowrap;
+}
+.btn-create-vm:hover { background: var(--accent-hover); }
+
+/* ── Modal ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(2px);
+  display: flex; align-items: center; justify-content: center; z-index: 100;
+}
+.modal {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  width: 420px; max-width: calc(100vw - 32px);
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  animation: modal-in .15s ease;
+}
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(-8px) scale(.98); }
+  to   { opacity: 1; transform: none; }
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 16px 12px; border-bottom: 1px solid var(--border);
+}
+.modal-icon {
+  width: 30px; height: 30px; border-radius: 7px; background: rgba(232,105,10,.15);
+  border: 1px solid rgba(232,105,10,.3);
+  display: flex; align-items: center; justify-content: center; color: var(--accent); flex-shrink: 0;
+}
+.modal-title { font-size: 13px; font-weight: 500; color: #fff; }
+.modal-sub   { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+.modal-close {
+  width: 26px; height: 26px; border-radius: 5px; background: transparent;
+  border: 1px solid var(--border); cursor: pointer; color: #666;
+  display: flex; align-items: center; justify-content: center; transition: all .1s;
+}
+.modal-close:hover { background: var(--input); color: #aaa; }
+.modal-loading {
+  padding: 32px; text-align: center; font-size: 11px; color: var(--text-muted);
+}
+.modal-body  { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.modal-footer {
+  padding: 12px 16px; border-top: 1px solid var(--border);
+  display: flex; justify-content: flex-end; gap: 8px;
+}
+
+/* ── Form elements ── */
+.form-group  { display: flex; flex-direction: column; gap: 5px; }
+.form-label  { font-size: 10px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: .06em; }
+.form-input, .form-select {
+  height: 32px; padding: 0 10px;
+  background: var(--input); border: 1px solid var(--border); border-radius: 6px;
+  color: #ccc; font-size: 11px; outline: none; width: 100%; box-sizing: border-box;
+  transition: border-color .1s;
+}
+.form-input:focus, .form-select:focus { border-color: var(--accent); }
+.form-input::placeholder { color: #444; }
+.form-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+.form-select option { background: var(--surface); }
+.flavor-hint { font-size: 9px; color: var(--text-muted); margin-top: 2px; }
+
+/* ── Buttons ── */
+.btn-primary {
+  height: 30px; padding: 0 14px; border-radius: 5px;
+  background: var(--accent); border: 1px solid var(--accent-hover);
+  font-size: 11px; font-weight: 500; color: #fff; cursor: pointer;
+  transition: background .1s;
+}
+.btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+.btn-primary:disabled { opacity: .45; cursor: not-allowed; }
+.btn-secondary {
+  height: 30px; padding: 0 14px; border-radius: 5px;
+  background: transparent; border: 1px solid var(--border);
+  font-size: 11px; color: #777; cursor: pointer; transition: all .1s;
+}
+.btn-secondary:hover:not(:disabled) { background: var(--input); color: #aaa; }
+.btn-secondary:disabled { opacity: .45; cursor: not-allowed; }

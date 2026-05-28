@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import Topbar from './components/Topbar'
 import Sidebar from './components/Sidebar'
 import TabBar from './components/TabBar'
@@ -7,23 +7,22 @@ import Resources from './pages/Resources'
 import Network from './pages/Network'
 import Datastore from './pages/Datastore'
 
-type Tab = 'overview' | 'resources' | 'network' | 'datastore'
-
 function App() {
-  const [activeTab, setActiveTab] = useState<Tab>('overview')
-
   return (
     <div className="app">
       <Topbar />
       <div className="body">
-        <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+        <Sidebar />
         <div className="main">
-          <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+          <TabBar />
           <div className="content">
-            {activeTab === 'overview'   && <Dashboard />}
-            {activeTab === 'resources'  && <Resources />}
-            {activeTab === 'network'    && <Network />}
-            {activeTab === 'datastore'  && <Datastore />}
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/resources" element={<Resources />} />
+              <Route path="/network" element={<Network />} />
+              <Route path="/datastore" element={<Datastore />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
           </div>
         </div>
       </div>
