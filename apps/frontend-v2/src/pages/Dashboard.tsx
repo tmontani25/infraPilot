@@ -2,18 +2,23 @@ import { useState, useEffect, useCallback } from 'react'
 import { IconServer, IconCircleCheck, IconPlayerStop, IconAlertCircle, IconRefresh } from '@tabler/icons-react'
 import { getVms } from '../services/vms'
 import { getProject } from '../services/health'
+import { getQuotas } from '../services/quotas'
 import VMCard from '../components/VMCard'
 import RingGauge from '../components/ui/RingGauge'
+import ProgressBar from '../components/ui/ProgressBar'
 import type { VM } from '../types'
+import type { Quotas } from '../services/quotas'
 
 export default function Dashboard() {
   const [vms, setVms] = useState<VM[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [projectName, setProjectName] = useState<string | null>(null)
+  const [quotas, setQuotas] = useState<Quotas | null>(null)
 
   useEffect(() => {
     getProject().then(p => setProjectName(p.project_name)).catch(() => {})
+    getQuotas().then(setQuotas).catch(() => {})
   }, [])
 
   const fetchVms = useCallback(async () => {
@@ -84,6 +89,22 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {quotas && (
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>
+            Quotas du projet
+          </div>
+          <div className="grid-3">
+            <QuotaCard label="Instances"     field={quotas.instances}       format={v => `${v} VM`} />
+            <QuotaCard label="vCPUs"         field={quotas.vcpus}           format={v => `${v} cœurs`} />
+            <QuotaCard label="RAM"           field={quotas.ram_mb}          format={v => `${Math.round(v / 1024)} Go`} />
+            <QuotaCard label="Volumes"       field={quotas.volumes}         format={v => `${v} vol.`} />
+            <QuotaCard label="Stockage"      field={quotas.gigabytes}       format={v => `${v} Go`} />
+            <QuotaCard label="Floating IPs"  field={quotas.floating_ips}    format={v => `${v} IP`} />
+          </div>
+        </div>
+      )}
+
       {vms.length === 0 && !error ? (
         <div className="state-empty">Aucune instance trouvée</div>
       ) : (
@@ -94,5 +115,23 @@ export default function Dashboard() {
         </div>
       )}
     </>
+  )
+}
+
+function QuotaCard({ label, field, format }: {
+  label: string
+  field: { used: number; limit: number } | undefined
+  format: (v: number) => string
+}) {
+  if (!field || field.limit <= 0) return null
+  const pct = Math.min(Math.round(field.used / field.limit * 100), 100)
+  return (
+    <div className="stat-box" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 8 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+        <span style={{ fontSize: 11, color: '#888' }}>{label}</span>
+        <span style={{ fontSize: 11, color: '#ccc' }}>{format(field.used)} / {format(field.limit)}</span>
+      </div>
+      <ProgressBar value={pct} />
+    </div>
   )
 }

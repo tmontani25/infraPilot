@@ -75,6 +75,11 @@ export async function deleteVolume(id: string) {
   return workerFetch(`${WORKER_URL}/volumes/${id}`, { method: 'DELETE' })
 }
 
+// Quotas
+export async function getQuotas() {
+  return workerFetch(`${WORKER_URL}/quotas`)
+}
+
 // Resources
 export async function getNetworks() {
   return workerFetch(`${WORKER_URL}/networks`)

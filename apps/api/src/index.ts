@@ -6,6 +6,7 @@ import { vmRoutes } from './routes/vms.js'
 import { ressourceRoutes } from './routes/ressource.js'
 import authRoutes from './routes/auth.js'
 import { volumeRoutes } from './routes/volumes.js'
+import { quotaRoutes } from './routes/quotas.js'
 import { errorHandler, notFoundHandler } from './utils/errorHandler.js'
 import { config } from './config/index.js'
 import cors from '@fastify/cors'
@@ -38,6 +39,7 @@ server.register(projectRoutes, { prefix: '/api/v1' })
 server.register(ressourceRoutes, { prefix: '/api/v1' })
 server.register(volumeRoutes, { prefix: '/api/v1' })
 server.register(authRoutes, { prefix: '/api/v1' })
+server.register(quotaRoutes, { prefix: '/api/v1' })
 
 
 

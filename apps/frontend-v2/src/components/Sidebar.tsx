@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { IconLayoutDashboard, IconCloud, IconSettings } from '@tabler/icons-react'
+import { IconLayoutDashboard, IconCloud, IconLogout, IconSettings } from '@tabler/icons-react'
+import { useAuth } from '../authContext'
 
 const NAV = [
   { path: '/',           label: 'Overview',   icon: <IconLayoutDashboard size={14} />, sub: null },
@@ -8,9 +9,21 @@ const NAV = [
   { path: '/datastore',  label: 'Datastore',  icon: <IconCloud size={14} color="#4ade80" />, sub: 'Volumes' },
 ]
 
+const ROLE_LABEL: Record<string, string> = {
+  admin: 'Administrateur',
+  member: 'Membre',
+}
+
 export default function Sidebar() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const { user, logout } = useAuth()
+  const initials = user?.username.slice(0, 2).toUpperCase() ?? '??'
+
+  async function handleLogout() {
+    await logout()
+    navigate('/login')
+  }
 
   return (
     <nav className="sidebar">
@@ -36,12 +49,15 @@ export default function Sidebar() {
       ))}
 
       <div className="sb-bottom">
-        <div className="sb-bot-avatar">AL</div>
+        <div className="sb-bot-avatar">{initials}</div>
         <div>
-          <div className="sb-bot-name">Admin</div>
-          <div className="sb-bot-role">Administrateur</div>
+          <div className="sb-bot-name">{user?.username}</div>
+          <div className="sb-bot-role">{ROLE_LABEL[user?.role ?? ''] ?? user?.role}</div>
         </div>
-        <IconSettings size={14} color="#444" style={{ marginLeft: 'auto', cursor: 'pointer' }} />
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
+          <IconSettings size={14} color="#444" style={{ cursor: 'pointer' }} onClick={() => navigate('/settings')} />
+          <IconLogout size={14} color="#444" style={{ cursor: 'pointer' }} onClick={handleLogout} />
+        </div>
       </div>
     </nav>
   )

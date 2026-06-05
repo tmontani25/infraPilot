@@ -29,8 +29,12 @@ def list_networks_service():
     has_router = set()
     for p in ports:
         owner = p.device_owner or ''
-        if owner.startswith('compute:nova') and p.device_id in vm_map:
-            vms_by_net.setdefault(p.network_id, []).append(vm_map[p.device_id])
+        if owner.startswith('compute:') and p.device_id in vm_map:
+            ip = p.fixed_ips[0]['ip_address'] if p.fixed_ips else None
+            vms_by_net.setdefault(p.network_id, []).append({
+                "name": vm_map[p.device_id],
+                "ip": ip,
+            })
         elif owner.startswith('network:router_interface'):
             has_router.add(p.network_id)
 

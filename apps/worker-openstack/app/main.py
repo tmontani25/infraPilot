@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routes import vms, volumes, resources, health, project
+from app.routes import vms, volumes, resources, health, project, quotas
 from app.error_handler import register_error_handlers
 
 app = FastAPI()
@@ -11,3 +11,4 @@ app.include_router(volumes.router)
 app.include_router(resources.router)
 app.include_router(health.router)
 app.include_router(project.router)
+app.include_router(quotas.router)

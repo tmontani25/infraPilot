@@ -23,12 +23,17 @@ export interface NetworkSubnet {
   cidr: string
 }
 
+export interface ConnectedVM {
+  name: string
+  ip: string | null
+}
+
 export interface Network {
   id: string
   name: string
   is_external: boolean
   subnets: NetworkSubnet[]
-  connected_vms: string[]
+  connected_vms: ConnectedVM[]
   has_router: boolean
 }
 
