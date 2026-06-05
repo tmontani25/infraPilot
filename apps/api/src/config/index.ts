@@ -8,5 +8,3 @@ export const config = {
 
 export const isDev = process.env.MODE === 'dev'
 export const isProd = process.env.MODE === 'production'
-
-

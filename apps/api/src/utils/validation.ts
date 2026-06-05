@@ -1,5 +1,5 @@
 import { z, ZodSchema } from 'zod'
-import { BadRequestError } from './appErrors'
+import { BadRequestError } from './appErrors.js'
 
 /**
  * Validates request body against a Zod schema

@@ -4,11 +4,13 @@ import { healthRoutes } from './routes/health.js'
 import { projectRoutes } from './routes/project.js'
 import { vmRoutes } from './routes/vms.js'
 import { ressourceRoutes } from './routes/ressource.js'
+import authRoutes from './routes/auth.js'
 import { volumeRoutes } from './routes/volumes.js'
 import { errorHandler, notFoundHandler } from './utils/errorHandler.js'
 import { config } from './config/index.js'
 import cors from '@fastify/cors'
-
+import jwt from '@fastify/jwt'
+import cookie from '@fastify/cookie'
 
 const server = Fastify({ logger: true })
 
@@ -20,12 +22,22 @@ server.register(cors, {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 })
 
+server.register(cookie)
+
+if (!process.env.JWT_SECRET){
+  throw new Error ('JWT_SECRET manquant dans .env')
+}
+server.register(jwt, {
+  secret: process.env.JWT_SECRET!,
+  cookie: { cookieName: 'token', signed: false }
+})
+
 server.register(vmRoutes, { prefix: '/api/v1' })
 server.register(healthRoutes, { prefix: '/api/v1' })
 server.register(projectRoutes, { prefix: '/api/v1' })
 server.register(ressourceRoutes, { prefix: '/api/v1' })
 server.register(volumeRoutes, { prefix: '/api/v1' })
-
+server.register(authRoutes, { prefix: '/api/v1' })
 
 
 

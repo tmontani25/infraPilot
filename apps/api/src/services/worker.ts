@@ -1,4 +1,4 @@
-//toute la communication avec le worker appels http
+//toute la communication avec le worker appels http centralisés0
 
 import { config } from '../config/index.js'
 import { WorkerError } from '../utils/appErrors.js'
