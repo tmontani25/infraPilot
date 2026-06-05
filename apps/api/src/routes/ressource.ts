@@ -1,7 +1,9 @@
 import type { FastifyInstance } from 'fastify'
 import * as workerService from '../services/worker.js'
+import authenticate from '../plugins/authenticate.js'
 
 export async function ressourceRoutes(server: FastifyInstance) {
+  server.addHook('preHandler', authenticate)
 
   server.get('/networks', async (_req, reply) => {
     const data = await workerService.getNetworks()

@@ -1,8 +1,10 @@
 import type { FastifyInstance } from 'fastify'
 import * as workerService from '../services/worker.js'
+import authenticate from '../plugins/authenticate.js'
 
 export async function vmRoutes(server: FastifyInstance) {
-
+  server.addHook('preHandler', authenticate)
+  
   server.get('/vms', async (_req, reply) => {
     const data = await workerService.getVms()
     return reply.send(data)
