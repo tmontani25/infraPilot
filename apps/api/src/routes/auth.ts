@@ -61,7 +61,7 @@ export default async function authRoutes(server: FastifyInstance) {
     server.get('/auth/me', { preHandler: authenticate }, async (request, _reply) => {
         const { id } = request.user as { id: number; username: string }
         const user = await userService.getUserById(id)
-        return success(user)
+        return success({user})
     })
 
     /************************* POST /auth/logout **********************************/
