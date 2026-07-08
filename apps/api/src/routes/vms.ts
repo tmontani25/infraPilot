@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify'
-import * as workerService from '../services/worker.js'
+import * as workerService from '../services/openstack.js'
 import authenticate from '../plugins/authenticate.js'
 
 export async function vmRoutes(server: FastifyInstance) {

@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify'
-import { getQuotas } from '../services/worker.js'
+import { getQuotas } from '../services/openstack.js'
 import authenticate from '../plugins/authenticate.js'
 
 export async function quotaRoutes(server: FastifyInstance) {

@@ -3,7 +3,7 @@
 import { config } from '../config/index.js'
 import { WorkerError } from '../utils/appErrors.js'
 
-const WORKER_URL = config.workerUrl
+const WORKER_URL = config.workers.openstack
 
 //centralise les appels au worker et gere les erreures
 async function workerFetch(url: string, options?: RequestInit) {

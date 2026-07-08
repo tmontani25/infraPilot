@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify'
-import { getProject } from '../services/worker.js'
+import { getProject } from '../services/openstack.js'
 import authenticate from '../plugins/authenticate.js'
 
 export async function projectRoutes(server: FastifyInstance) {

@@ -14,3 +14,11 @@ model User {
 	passwordHash  String
 	role			String @default("member")
 }
+
+model CloudProvider {
+  id          Int     @id
+  clientId    Int
+  type        String  // "openstack" | "proxmox" | "hetzner"
+  name        String
+  credentials Json  	// structure différente selon le type, chiffrée openstack proxmox vps
+}
