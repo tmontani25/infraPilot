@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { IconDatabase } from '@tabler/icons-react'
 import { getVolumes } from '../services/volumes'
 import { getVms } from '../services/vms'
+import { getErrorMessage } from '../lib/errors'
 import type { Volume, VM } from '../types'
 
 function volumeStatusColor(status: string) {
@@ -23,7 +24,7 @@ export default function Datastore() {
         setVolumes(vols)
         setVmNames(Object.fromEntries(vms.map((vm: VM) => [vm.id, vm.name])))
       })
-      .catch(e => setError(e instanceof Error ? e.message : 'Erreur API'))
+      .catch(e => setError(getErrorMessage(e)))
       .finally(() => setLoading(false))
   }, [])
 

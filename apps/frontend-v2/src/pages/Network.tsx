@@ -3,6 +3,7 @@ import { IconNetwork, IconShieldCheck } from '@tabler/icons-react'
 import { getNetworks, getSecurityGroups } from '../services/networks'
 import { getVms } from '../services/vms'
 import NetworkTopology from '../components/NetworkTopology'
+import { getErrorMessage } from '../lib/errors'
 import type { Network, SecurityGroup, VM } from '../types'
 
 export default function NetworkPage() {
@@ -15,7 +16,7 @@ export default function NetworkPage() {
   useEffect(() => {
     Promise.all([getNetworks(), getSecurityGroups(), getVms()])
       .then(([nets, groups, instances]) => { setNetworks(nets); setSgs(groups); setVms(instances) })
-      .catch(e => setError(e instanceof Error ? e.message : 'Erreur API'))
+      .catch(e => setError(getErrorMessage(e)))
       .finally(() => setLoading(false))
   }, [])
 

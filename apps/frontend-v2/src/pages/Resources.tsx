@@ -3,6 +3,7 @@ import { IconSearch, IconRefresh, IconPlus } from '@tabler/icons-react'
 import { getVms } from '../services/vms'
 import VMCard from '../components/VMCard'
 import CreateVMModal from '../components/CreateVMModal'
+import { getErrorMessage } from '../lib/errors'
 import type { VM } from '../types'
 
 type Filter = 'all' | 'ACTIVE' | 'SHUTOFF' | 'ERROR'
@@ -21,7 +22,7 @@ export default function Resources() {
       setVms(data)
       setError(null)
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Erreur API")
+      setError(getErrorMessage(e))
     } finally {
       setLoading(false)
     }

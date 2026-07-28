@@ -6,6 +6,7 @@ import {
 } from '@tabler/icons-react'
 import { getVm, getVmVolumes, startVm, stopVm, rebootVm, deleteVm } from '../services/vms'
 import StatusPill from '../components/ui/StatusPill'
+import { getErrorMessage } from '../lib/errors'
 import type { VMDetail as VMDetailType, Volume } from '../types'
 
 export default function VMDetail() {
@@ -26,7 +27,7 @@ export default function VMDetail() {
       setVolumes(volData)
       setError(null)
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Erreur API')
+      setError(getErrorMessage(e))
     } finally {
       setLoading(false)
     }

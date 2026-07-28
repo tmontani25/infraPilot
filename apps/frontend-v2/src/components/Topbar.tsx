@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { IconSearch, IconLogout, IconChevronLeft } from '@tabler/icons-react'
 import { useAuth } from '../authContext'
+import ProviderSelector from './ProviderSelector'
 
 const ROLE_LABEL: Record<string, string> = {
   admin: 'Administrateur',
@@ -48,6 +49,7 @@ export default function Topbar() {
         <IconSearch size={13} color="#555" />
         <input placeholder="Search..." />
       </div>
+      <ProviderSelector />
       <div className="spacer" />
       <div className="tb-live">
         <span className="dot" />

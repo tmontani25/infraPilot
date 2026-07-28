@@ -24,10 +24,26 @@ model Client {
 }
 
 model CloudProvider {
-  id          Int     @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   clientId    Int
-  client      Client  @relation(fields: [clientId], references: [id])
-  type        String  // "openstack" | "proxmox" | "hetzner"
+  client      Client       @relation(fields: [clientId], references: [id])
+  type        String       // "openstack" | "proxmox" | "hetzner"
   name        String
-  credentials String  // JSON chiffré (AES-256-GCM), jamais stocké en clair
+  credentials String       // JSON chiffré (AES-256-GCM), jamais stocké en clair
+  deployments Deployment[]
+}
+
+model Deployment {
+  id           Int      @id @default(autoincrement())
+  providerId   Int
+  provider     CloudProvider @relation(fields: [providerId], references: [id])
+  templateId   String   // ex: "openstack-vm"
+  name         String
+  variables    String   // JSON des variables saisies (pas de secret ici, juste des IDs OpenStack)
+  status       String   @default("pending") // pending | planned | applied | destroyed | failed
+  planOutput   String?
+  applyOutput  String?
+  destroyOutput String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

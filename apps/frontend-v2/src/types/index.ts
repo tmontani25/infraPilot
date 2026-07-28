@@ -89,3 +89,28 @@ export interface Keypair {
   name: string
   fingerprint: string
 }
+
+export interface Client {
+  id: number
+  name: string
+}
+
+export interface CloudProvider {
+  id: number
+  clientId: number
+  type: 'openstack' | 'proxmox' | 'hetzner'
+  name: string
+}
+
+export interface OpenstackCredentials {
+  auth_url: string
+  project_id: string
+  project_name: string
+  username: string
+  password: string
+  user_domain_name: string
+  project_domain_id: string
+  region_name: string
+  interface: string
+  identity_api_version: string
+}

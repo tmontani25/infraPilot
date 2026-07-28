@@ -1,0 +1,11 @@
+{
+  "id": "openstack-vm",
+  "name": "VM OpenStack simple",
+  "description": "Crée une seule instance OpenStack (image + flavor + réseau au choix).",
+  "variables": [
+    { "name": "instance_name", "label": "Nom de la VM", "type": "string" },
+    { "name": "image_id", "label": "ID de l'image", "type": "string" },
+    { "name": "flavor_id", "label": "ID du flavor", "type": "string" },
+    { "name": "network_id", "label": "ID du réseau", "type": "string" }
+  ]
+}

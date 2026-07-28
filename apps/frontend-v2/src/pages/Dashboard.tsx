@@ -6,6 +6,7 @@ import { getQuotas } from '../services/quotas'
 import VMCard from '../components/VMCard'
 import RingGauge from '../components/ui/RingGauge'
 import ProgressBar from '../components/ui/ProgressBar'
+import { getErrorMessage } from '../lib/errors'
 import type { VM } from '../types'
 import type { Quotas } from '../services/quotas'
 
@@ -27,7 +28,7 @@ export default function Dashboard() {
       setVms(data)
       setError(null)
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Erreur de connexion à l'API")
+      setError(getErrorMessage(e, "Erreur de connexion à l'API"))
     } finally {
       setLoading(false)
     }
