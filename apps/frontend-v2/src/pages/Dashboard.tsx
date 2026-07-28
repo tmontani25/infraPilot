@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
-import { IconServer, IconCircleCheck, IconPlayerStop, IconAlertCircle, IconRefresh } from '@tabler/icons-react'
+import { IconServer, IconCircleCheck, IconPlayerStop, IconAlertCircle, IconRefresh, IconCoin } from '@tabler/icons-react'
 import { getVms } from '../services/vms'
 import { getProject } from '../services/health'
 import { getQuotas } from '../services/quotas'
+import { estimateMonthlyCost } from '../lib/pricing'
 import VMCard from '../components/VMCard'
 import RingGauge from '../components/ui/RingGauge'
 import ProgressBar from '../components/ui/ProgressBar'
@@ -44,6 +45,8 @@ export default function Dashboard() {
   const stopped  = vms.filter(v => v.status === 'SHUTOFF').length
   const errors   = vms.filter(v => v.status === 'ERROR').length
   const activePct = vms.length ? Math.round(active / vms.length * 100) : 0
+
+  const totalMonthlyCost = vms.reduce((sum, vm) => sum + estimateMonthlyCost(vm.flavor), 0)
 
   if (loading) return <div className="state-empty">Chargement des instances…</div>
 
@@ -102,6 +105,27 @@ export default function Dashboard() {
             <QuotaCard label="Volumes"       field={quotas.volumes}         format={v => `${v} vol.`} />
             <QuotaCard label="Stockage"      field={quotas.gigabytes}       format={v => `${v} Go`} />
             <QuotaCard label="Floating IPs"  field={quotas.floating_ips}    format={v => `${v} IP`} />
+          </div>
+        </div>
+      )}
+
+      {vms.length > 0 && (
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>
+            Coûts estimés
+          </div>
+          <div className="stats-row">
+            <div className="stat-box">
+              <IconCoin size={18} color="#f59e0b" />
+              <div><div className="stat-val">{totalMonthlyCost.toFixed(0)} €</div><div className="stat-label">Estimé / mois</div></div>
+            </div>
+            <div className="stat-box">
+              <IconCoin size={18} color="#888" />
+              <div><div className="stat-val">{(totalMonthlyCost / (24 * 30)).toFixed(2)} €</div><div className="stat-label">Estimé / heure</div></div>
+            </div>
+          </div>
+          <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 6 }}>
+            Estimation indicative basée sur les ressources allouées (vCPU/RAM/disque), à ajuster avec la grille tarifaire réelle du fournisseur.
           </div>
         </div>
       )}

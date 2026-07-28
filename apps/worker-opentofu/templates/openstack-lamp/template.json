@@ -1,0 +1,11 @@
+{
+  "id": "openstack-lamp",
+  "name": "Stack LAMP (Apache/MySQL/PHP)",
+  "description": "Crée une VM OpenStack avec Apache, MySQL et PHP installés via cloud-init, plus un security group ouvrant SSH/HTTP/HTTPS. Nécessite une image Ubuntu/Debian (cloud-init).",
+  "variables": [
+    { "name": "instance_name", "label": "Nom de la VM", "type": "string" },
+    { "name": "image_id", "label": "ID de l'image (Ubuntu/Debian)", "type": "string" },
+    { "name": "flavor_id", "label": "ID du flavor", "type": "string" },
+    { "name": "network_id", "label": "ID du réseau", "type": "string" }
+  ]
+}

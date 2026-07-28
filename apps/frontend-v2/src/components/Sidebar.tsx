@@ -1,12 +1,13 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { IconLayoutDashboard, IconCloud, IconLogout, IconSettings } from '@tabler/icons-react'
+import { IconLayoutDashboard, IconCloud, IconRocket, IconLogout, IconSettings } from '@tabler/icons-react'
 import { useAuth } from '../authContext'
 
 const NAV = [
-  { path: '/',           label: 'Overview',   icon: <IconLayoutDashboard size={14} />, sub: null },
-  { path: '/resources',  label: 'Instances',  icon: <IconCloud size={14} color="#60a5fa" />, sub: 'VMs' },
-  { path: '/network',    label: 'Network',    icon: <IconCloud size={14} color="#a78bfa" />, sub: 'Réseaux · Subnets · SG' },
-  { path: '/datastore',  label: 'Datastore',  icon: <IconCloud size={14} color="#4ade80" />, sub: 'Volumes' },
+  { path: '/',            label: 'Overview',     icon: <IconLayoutDashboard size={14} />, sub: null },
+  { path: '/resources',   label: 'Instances',    icon: <IconCloud size={14} color="#60a5fa" />, sub: 'VMs', section: 'OpenStack Infomaniak' },
+  { path: '/network',     label: 'Network',      icon: <IconCloud size={14} color="#a78bfa" />, sub: 'Réseaux · Subnets · SG' },
+  { path: '/datastore',   label: 'Datastore',    icon: <IconCloud size={14} color="#4ade80" />, sub: 'Volumes' },
+  { path: '/deployments', label: 'Déploiements', icon: <IconRocket size={14} color="#e8690a" />, sub: 'OpenTofu', section: 'Infrastructure as Code' },
 ]
 
 const ROLE_LABEL: Record<string, string> = {
@@ -27,12 +28,12 @@ export default function Sidebar() {
 
   return (
     <nav className="sidebar">
-      {NAV.map((item, i) => (
+      {NAV.map((item) => (
         <div key={item.path} style={{ display: 'contents' }}>
-          {i === 1 && (
+          {item.section && (
             <>
               <div className="sb-divider" />
-              <div className="sb-section-hd">OpenStack Infomaniak</div>
+              <div className="sb-section-hd">{item.section}</div>
             </>
           )}
           <div

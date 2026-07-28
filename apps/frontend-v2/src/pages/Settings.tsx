@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { useAuth } from '../authContext'
 import { useProviders } from '../providerContext'
 import { createClient, deleteClient } from '../services/clients'
+import { createProject, deleteProject } from '../services/projects'
 import { createCloudProvider, deleteCloudProvider } from '../services/cloudProviders'
-import type { OpenstackCredentials } from '../types'
+import type { Project, OpenstackCredentials } from '../types'
 
 const ROLE_LABEL: Record<string, string> = {
   admin: 'Administrateur',
@@ -25,7 +26,7 @@ const EMPTY_OPENSTACK_CREDENTIALS: OpenstackCredentials = {
 
 export default function Settings() {
   const { user } = useAuth()
-  const { clients, providers, refresh } = useProviders()
+  const { clients, projectsByClient, providers, refresh } = useProviders()
 
   return (
     <div style={{ padding: '24px', maxWidth: 640, display: 'flex', flexDirection: 'column', gap: 32 }}>
@@ -41,7 +42,8 @@ export default function Settings() {
       <div>
         <h2 style={{ marginBottom: 12, fontSize: 16, fontWeight: 600 }}>Comptes cloud</h2>
         <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 16 }}>
-          Un client regroupe un ou plusieurs comptes cloud (OpenStack, Proxmox, Hetzner).
+          Un client (ex: une étude d'avocats) regroupe un ou plusieurs projets, chacun
+          regroupant un ou plusieurs comptes cloud (OpenStack, Proxmox, Hetzner).
           Le compte actif se choisit dans la barre du haut.
         </p>
 
@@ -49,6 +51,7 @@ export default function Settings() {
           <ClientBlock
             key={client.id}
             client={client}
+            projects={projectsByClient[client.id] ?? []}
             providers={providers.filter((p) => p.clientId === client.id)}
             onChanged={refresh}
           />
@@ -82,18 +85,66 @@ function Field({ label, value }: { label: string; value: string }) {
 
 function ClientBlock({
   client,
+  projects,
   providers,
   onChanged,
 }: {
   client: { id: number; name: string }
+  projects: Project[]
+  providers: { id: number; projectId: number; name: string; type: string }[]
+  onChanged: () => void
+}) {
+  const [showAddProject, setShowAddProject] = useState(false)
+
+  async function handleDeleteClient() {
+    if (!confirm(`Supprimer le client "${client.name}" et tous ses projets/comptes cloud ?`)) return
+    await deleteClient(client.id)
+    onChanged()
+  }
+
+  return (
+    <div style={styles.clientBlock}>
+      <div style={styles.clientHeader}>
+        <span style={{ fontWeight: 600, fontSize: 13 }}>{client.name}</span>
+        <button style={styles.linkBtn} onClick={handleDeleteClient}>Supprimer</button>
+      </div>
+
+      {projects.map((project) => (
+        <ProjectBlock
+          key={project.id}
+          project={project}
+          providers={providers.filter((p) => p.projectId === project.id)}
+          onChanged={onChanged}
+        />
+      ))}
+
+      {showAddProject ? (
+        <AddProjectForm
+          clientId={client.id}
+          onCreated={() => { setShowAddProject(false); onChanged() }}
+          onCancel={() => setShowAddProject(false)}
+        />
+      ) : (
+        <button style={styles.addBtn} onClick={() => setShowAddProject(true)}>+ Ajouter un projet</button>
+      )}
+    </div>
+  )
+}
+
+function ProjectBlock({
+  project,
+  providers,
+  onChanged,
+}: {
+  project: Project
   providers: { id: number; name: string; type: string }[]
   onChanged: () => void
 }) {
   const [showAddProvider, setShowAddProvider] = useState(false)
 
-  async function handleDeleteClient() {
-    if (!confirm(`Supprimer le client "${client.name}" et tous ses comptes cloud ?`)) return
-    await deleteClient(client.id)
+  async function handleDeleteProject() {
+    if (!confirm(`Supprimer le projet "${project.name}" et tous ses comptes cloud ?`)) return
+    await deleteProject(project.id)
     onChanged()
   }
 
@@ -104,10 +155,10 @@ function ClientBlock({
   }
 
   return (
-    <div style={styles.clientBlock}>
-      <div style={styles.clientHeader}>
-        <span style={{ fontWeight: 600, fontSize: 13 }}>{client.name}</span>
-        <button style={styles.linkBtn} onClick={handleDeleteClient}>Supprimer</button>
+    <div style={styles.projectBlock}>
+      <div style={styles.projectHeader}>
+        <span style={{ fontWeight: 500, fontSize: 12 }}>{project.name}</span>
+        <button style={styles.linkBtn} onClick={handleDeleteProject}>Supprimer</button>
       </div>
 
       {providers.map((p) => (
@@ -120,7 +171,7 @@ function ClientBlock({
 
       {showAddProvider ? (
         <AddProviderForm
-          clientId={client.id}
+          projectId={project.id}
           onCreated={() => { setShowAddProvider(false); onChanged() }}
           onCancel={() => setShowAddProvider(false)}
         />
@@ -161,12 +212,60 @@ function AddClientForm({ onCreated }: { onCreated: () => void }) {
   )
 }
 
-function AddProviderForm({
+function AddProjectForm({
   clientId,
   onCreated,
   onCancel,
 }: {
   clientId: number
+  onCreated: () => void
+  onCancel: () => void
+}) {
+  const [name, setName] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!name.trim()) return
+    setSubmitting(true)
+    setError(null)
+    try {
+      await createProject(clientId, name.trim())
+      onCreated()
+    } catch (err: any) {
+      setError(err?.response?.data?.message ?? 'Erreur lors de la création')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} style={{ ...styles.providerForm, marginLeft: 0 }}>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <input
+          style={styles.input}
+          placeholder="Nom du projet (ex: Infra prod)"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          autoFocus
+        />
+      </div>
+      {error && <div style={{ color: 'var(--red)', fontSize: 12 }}>{error}</div>}
+      <div style={{ display: 'flex', gap: 8 }}>
+        <button style={styles.primaryBtn} disabled={submitting}>Créer</button>
+        <button type="button" style={styles.linkBtn} onClick={onCancel}>Annuler</button>
+      </div>
+    </form>
+  )
+}
+
+function AddProviderForm({
+  projectId,
+  onCreated,
+  onCancel,
+}: {
+  projectId: number
   onCreated: () => void
   onCancel: () => void
 }) {
@@ -195,7 +294,7 @@ function AddProviderForm({
 
     setSubmitting(true)
     try {
-      await createCloudProvider(clientId, { type, name, credentials })
+      await createCloudProvider(projectId, { type, name, credentials })
       onCreated()
     } catch (err: any) {
       setError(err?.response?.data?.message ?? 'Erreur lors de la création')
@@ -267,6 +366,19 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  projectBlock: {
+    marginLeft: 14,
+    paddingLeft: 12,
+    borderLeft: '2px solid var(--border)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 6,
+  },
+  projectHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   providerRow: {
     display: 'flex',
     alignItems: 'center',
@@ -316,6 +428,7 @@ const styles: Record<string, React.CSSProperties> = {
     flexDirection: 'column',
     gap: 8,
     marginTop: 8,
+    marginLeft: 14,
     padding: 10,
     background: 'var(--input)',
     borderRadius: 6,

@@ -7,6 +7,7 @@ import Resources from './pages/Resources'
 import VMDetail from './pages/VMDetail'
 import Network from './pages/Network'
 import Datastore from './pages/Datastore'
+import Deployments from './pages/Deployments'
 import Settings from './pages/Settings'
 import Login from './pages/Login'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -39,6 +40,7 @@ function App() {
           <Route path="/resources/:id" element={<VMDetail />} />
           <Route path="/network" element={<Network />} />
           <Route path="/datastore" element={<Datastore />} />
+          <Route path="/deployments" element={<Deployments />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

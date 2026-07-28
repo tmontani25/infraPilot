@@ -3,7 +3,18 @@ from app.cache import ttl_cache
 @ttl_cache(ttl=30)
 def list_vms_service(conn):
     servers = conn.compute.servers()
-    return [{"id": vm.id, "name": vm.name, "status": vm.status} for vm in servers]
+    # vm.flavor["id"] est en réalité le nom du flavor (pas son UUID) sur cette API,
+    # donc on utilise directement les specs déjà embarquées plutôt que de re-matcher
+    # contre /flavors.
+    return [
+        {
+            "id": vm.id,
+            "name": vm.name,
+            "status": vm.status,
+            "flavor": {"vcpus": vm.flavor["vcpus"], "ram": vm.flavor["ram"], "disk": vm.flavor["disk"]},
+        }
+        for vm in servers
+    ]
 
 def get_vm_by_id_service(conn, vm_id: str):
     vm = conn.compute.get_server(vm_id)

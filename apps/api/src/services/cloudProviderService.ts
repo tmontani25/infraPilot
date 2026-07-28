@@ -3,13 +3,13 @@ import { encrypt, decrypt } from '../utils/crypto.js'
 import { NotFoundError } from '../utils/appErrors.js'
 
 // credentials n'est jamais renvoyé au frontend, uniquement utilisé en interne pour appeler le worker
-export async function createCloudProvider(clientId: number, type: string, name: string, credentials: Record<string, unknown>) {
+export async function createCloudProvider(projectId: number, type: string, name: string, credentials: Record<string, unknown>) {
     const encrypted = encrypt(credentials)
-    return cloudProviderRepository.create({ clientId, type, name, credentials: encrypted })
+    return cloudProviderRepository.create({ projectId, type, name, credentials: encrypted })
 }
 
-export async function listCloudProviders(clientId: number) {
-    return cloudProviderRepository.getByClientId(clientId)
+export async function listCloudProviders(projectId: number) {
+    return cloudProviderRepository.getByProjectId(projectId)
 }
 
 export async function getDecryptedCredentials(id: number) {

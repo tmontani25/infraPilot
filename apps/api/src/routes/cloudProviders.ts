@@ -6,16 +6,16 @@ import { success } from '../utils/response.js'
 export async function cloudProviderRoutes(server: FastifyInstance) {
   server.addHook('preHandler', authenticate)
 
-  server.get('/clients/:clientId/cloud-providers', async (req, _reply) => {
-    const { clientId } = req.params as { clientId: string }
-    const providers = await cloudProviderService.listCloudProviders(Number(clientId))
+  server.get('/projects/:projectId/cloud-providers', async (req, _reply) => {
+    const { projectId } = req.params as { projectId: string }
+    const providers = await cloudProviderService.listCloudProviders(Number(projectId))
     return success({ providers })
   })
 
-  server.post('/clients/:clientId/cloud-providers', async (req, reply) => {
-    const { clientId } = req.params as { clientId: string }
+  server.post('/projects/:projectId/cloud-providers', async (req, reply) => {
+    const { projectId } = req.params as { projectId: string }
     const { type, name, credentials } = req.body as { type: string; name: string; credentials: Record<string, unknown> }
-    const provider = await cloudProviderService.createCloudProvider(Number(clientId), type, name, credentials)
+    const provider = await cloudProviderService.createCloudProvider(Number(projectId), type, name, credentials)
     reply.status(201)
     return success({ provider })
   })

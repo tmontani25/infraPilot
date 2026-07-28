@@ -8,6 +8,7 @@ import authRoutes from './routes/auth.js'
 import { volumeRoutes } from './routes/volumes.js'
 import { quotaRoutes } from './routes/quotas.js'
 import { clientRoutes } from './routes/clients.js'
+import { clientProjectRoutes } from './routes/projects.js'
 import { cloudProviderRoutes } from './routes/cloudProviders.js'
 import { deploymentRoutes } from './routes/deployments.js'
 import { errorHandler, notFoundHandler } from './utils/errorHandler.js'
@@ -45,6 +46,7 @@ server.register(volumeRoutes, { prefix: '/api/v1' })
 server.register(authRoutes, { prefix: '/api/v1' })
 server.register(quotaRoutes, { prefix: '/api/v1' })
 server.register(clientRoutes, { prefix: '/api/v1' })
+server.register(clientProjectRoutes, { prefix: '/api/v1' })
 server.register(cloudProviderRoutes, { prefix: '/api/v1' })
 server.register(deploymentRoutes, { prefix: '/api/v1' })
 

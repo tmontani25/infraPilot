@@ -17,16 +17,26 @@ model User {
 }
 
 model Client {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  users    User[]
+  projects Project[]
+}
+
+model Project {
   id             Int             @id @default(autoincrement())
-  name           String          @unique
-  users          User[]
+  clientId       Int
+  client         Client          @relation(fields: [clientId], references: [id])
+  name           String
   cloudProviders CloudProvider[]
+
+  @@unique([clientId, name])
 }
 
 model CloudProvider {
   id          Int          @id @default(autoincrement())
-  clientId    Int
-  client      Client       @relation(fields: [clientId], references: [id])
+  projectId   Int
+  project     Project      @relation(fields: [projectId], references: [id])
   type        String       // "openstack" | "proxmox" | "hetzner"
   name        String
   credentials String       // JSON chiffré (AES-256-GCM), jamais stocké en clair
