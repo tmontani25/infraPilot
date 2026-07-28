@@ -19,14 +19,18 @@ model User {
 model Client {
   id       Int       @id @default(autoincrement())
   name     String    @unique
+  address  String?
+  contacts String?
+  contrats String?
   users    User[]
   projects Project[]
+  serveurs Serveur[]
 }
 
 model Project {
   id             Int             @id @default(autoincrement())
   clientId       Int?
-  client         Client?         @relation(fields: [clientId], references: [id])
+  client         Client?         @relation(fields: [clientId], references: [id], onDelete: Restrict)
   name           String
   cloudProviders CloudProvider[]
 
@@ -41,6 +45,54 @@ model CloudProvider {
   name        String
   credentials String       // JSON chiffré (AES-256-GCM), jamais stocké en clair
   deployments Deployment[]
+  serveurs    Serveur[]
+}
+
+// Registre déclaratif des serveurs gérés (interne/VPS/Public Cloud), au-delà du
+// périmètre OpenStack du CDC. Pour hebergement="public_cloud", les caractéristiques
+// techniques (CPU/RAM/disque/statut/IP) et les actions (redémarrer, supprimer...)
+// viennent en direct de l'API OpenStack via cloudProviderId+cloudVmId — jamais
+// dupliquées ici, pour rester fidèle à l'esprit "synchronisation" du CDC. Seul le
+// déclaratif qu'aucune API ne connaît (sauvegardes, accès RDP/VPN, historique) est
+// stocké. Pour interne/VPS (pas d'API), tout est saisi à la main.
+model Serveur {
+  id              Int             @id @default(autoincrement())
+  clientId        Int?
+  client          Client?         @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  name            String
+  hebergement     String          // "interne" | "public_cloud" | "vps"
+  os              String          // "linux" | "windows" | "synology"
+  distribution    String?         // ex: "Debian 12", "Windows Server 2023"
+  deploymentType  String?         // "docker" | "proxmox" | "standalone"
+
+  // Uniquement pour hebergement="public_cloud" : référence la VM réelle (pas de duplication)
+  cloudProviderId Int?
+  cloudProvider   CloudProvider?  @relation(fields: [cloudProviderId], references: [id], onDelete: Restrict)
+  cloudVmId       String?
+
+  // Uniquement saisis à la main pour interne/VPS (sinon vient du worker en live)
+  cpu             Int?
+  ram             Int?
+  disk            Int?
+  ip              String?
+
+  ssh             String?
+  rdp             String?
+  vpn             String?
+  sauvegardes     String          @default("[]") // JSON array, ex: ["restic","rsync"]
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  events          ServeurEvent[]
+}
+
+model ServeurEvent {
+  id        Int      @id @default(autoincrement())
+  serveurId Int
+  serveur   Serveur  @relation(fields: [serveurId], references: [id], onDelete: Cascade)
+  type      String   // "incident" | "log" | "update" | "note"
+  message   String
+  createdAt DateTime @default(now())
 }
 
 model Deployment {

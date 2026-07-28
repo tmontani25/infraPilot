@@ -52,7 +52,7 @@ def stop_vm_service(conn, vm_id: str):
     invalidate(list_vms_service)
 
 def reboot_vm_service(conn, vm_id: str):
-    conn.compute.reboot_server(vm_id)
+    conn.compute.reboot_server(vm_id, reboot_type="SOFT")
     invalidate(list_vms_service)
 
 def get_volumes_by_vm_service(conn, vm_id: str):

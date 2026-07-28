@@ -12,8 +12,15 @@ export async function create(name: string) {
     return prisma.client.create({ data: { name } })
 }
 
-export async function update(id: number, name: string) {
-    return prisma.client.update({ where: { id }, data: { name } })
+export type ClientUpdateInput = Partial<{
+    name: string
+    address: string | null
+    contacts: string | null
+    contrats: string | null
+}>
+
+export async function update(id: number, data: ClientUpdateInput) {
+    return prisma.client.update({ where: { id }, data })
 }
 
 export async function remove(id: number) {

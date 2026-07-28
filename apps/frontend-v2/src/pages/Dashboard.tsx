@@ -11,7 +11,10 @@ import { getErrorMessage } from '../lib/errors'
 import type { VM } from '../types'
 import type { Quotas } from '../services/quotas'
 
-export default function Dashboard() {
+// embedded=true : utilisé dans l'onglet "Vue" d'un projet Public Cloud, où le header
+// et la grille de VMs (Resources.tsx s'en charge déjà, avec recherche/filtres/création)
+// seraient redondants.
+export default function Dashboard({ embedded = false }: { embedded?: boolean } = {}) {
   const [vms, setVms] = useState<VM[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -52,21 +55,23 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="overview-header">
-        <div className="overview-icon"><IconServer size={20} /></div>
-        <div>
-          <div className="overview-title">{projectName ?? 'OpenStack Infomaniak'}</div>
-          <div className="overview-sub">Gestion des instances du projet</div>
+      {!embedded && (
+        <div className="overview-header">
+          <div className="overview-icon"><IconServer size={20} /></div>
+          <div>
+            <div className="overview-title">{projectName ?? 'OpenStack Infomaniak'}</div>
+            <div className="overview-sub">Gestion des instances du projet</div>
+          </div>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
+            {error
+              ? <span className="pill pill-error">API indisponible</span>
+              : <span className="pill pill-live">Live</span>}
+            <button className="vm-act-btn" onClick={fetchVms} title="Rafraîchir" style={{ width: 28, height: 28 }}>
+              <IconRefresh size={13} />
+            </button>
+          </div>
         </div>
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
-          {error
-            ? <span className="pill pill-error">API indisponible</span>
-            : <span className="pill pill-live">Live</span>}
-          <button className="vm-act-btn" onClick={fetchVms} title="Rafraîchir" style={{ width: 28, height: 28 }}>
-            <IconRefresh size={13} />
-          </button>
-        </div>
-      </div>
+      )}
 
       {error && <div className="state-error">{error}</div>}
 
@@ -130,14 +135,16 @@ export default function Dashboard() {
         </div>
       )}
 
-      {vms.length === 0 && !error ? (
-        <div className="state-empty">Aucune instance trouvée</div>
-      ) : (
-        <div className="grid-3">
-          {vms.map(vm => (
-            <VMCard key={vm.id} vm={vm} onRefresh={fetchVms} />
-          ))}
-        </div>
+      {!embedded && (
+        vms.length === 0 && !error ? (
+          <div className="state-empty">Aucune instance trouvée</div>
+        ) : (
+          <div className="grid-3">
+            {vms.map(vm => (
+              <VMCard key={vm.id} vm={vm} onRefresh={fetchVms} />
+            ))}
+          </div>
+        )
       )}
     </>
   )

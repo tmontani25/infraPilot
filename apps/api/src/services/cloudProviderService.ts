@@ -1,5 +1,6 @@
 import * as cloudProviderRepository from '../repository/cloudProviderRepository.js'
 import * as deploymentRepository from '../repository/deploymentRepository.js'
+import * as serveurRepository from '../repository/serveurRepository.js'
 import { encrypt, decrypt } from '../utils/crypto.js'
 import { NotFoundError, ConflictError } from '../utils/appErrors.js'
 
@@ -33,6 +34,13 @@ export async function deleteCloudProvider(id: number) {
     if (deployments.length > 0) {
         throw new ConflictError(
             `Impossible de supprimer "${provider.name}" : ${deployments.length} déploiement(s) y sont encore rattaché(s).`
+        )
+    }
+
+    const serveurs = await serveurRepository.getByCloudProviderId(id)
+    if (serveurs.length > 0) {
+        throw new ConflictError(
+            `Impossible de supprimer "${provider.name}" : ${serveurs.length} fiche(s) serveur y sont encore rattachée(s).`
         )
     }
 

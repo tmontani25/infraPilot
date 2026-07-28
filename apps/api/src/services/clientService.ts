@@ -1,5 +1,7 @@
 import * as clientRepository from '../repository/clientRepository.js'
+import type { ClientUpdateInput } from '../repository/clientRepository.js'
 import * as projectRepository from '../repository/projectRepository.js'
+import * as serveurRepository from '../repository/serveurRepository.js'
 import { NotFoundError, ConflictError } from '../utils/appErrors.js'
 
 export async function getAllClients() {
@@ -16,9 +18,9 @@ export async function createClient(name: string) {
     return clientRepository.create(name)
 }
 
-export async function updateClient(id: number, name: string) {
+export async function updateClient(id: number, data: ClientUpdateInput) {
     await getClientById(id)
-    return clientRepository.update(id, name)
+    return clientRepository.update(id, data)
 }
 
 export async function deleteClient(id: number) {
@@ -28,6 +30,13 @@ export async function deleteClient(id: number) {
     if (projects.length > 0) {
         throw new ConflictError(
             `Impossible de supprimer "${client.name}" : ${projects.length} projet(s) y sont encore rattaché(s). Supprime-les d'abord.`
+        )
+    }
+
+    const serveurs = await serveurRepository.getByClientId(id)
+    if (serveurs.length > 0) {
+        throw new ConflictError(
+            `Impossible de supprimer "${client.name}" : ${serveurs.length} serveur(s) y sont encore rattaché(s). Supprime-les ou détache-les d'abord.`
         )
     }
 

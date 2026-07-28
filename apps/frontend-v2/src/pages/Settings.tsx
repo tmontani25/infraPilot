@@ -134,7 +134,7 @@ function ClientBlock({
     if (!name.trim() || name.trim() === client.name) { setRenaming(false); return }
     setSavingName(true)
     try {
-      await updateClient(client.id, name.trim())
+      await updateClient(client.id, { name: name.trim() })
       setRenaming(false)
       onChanged()
     } finally {

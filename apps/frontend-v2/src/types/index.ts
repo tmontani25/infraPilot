@@ -94,6 +94,9 @@ export interface Keypair {
 export interface Client {
   id: number
   name: string
+  address: string | null
+  contacts: string | null
+  contrats: string | null
 }
 
 export interface Project {
@@ -107,6 +110,52 @@ export interface CloudProvider {
   projectId: number
   type: 'openstack' | 'proxmox' | 'hetzner'
   name: string
+}
+
+export type Hebergement = 'interne' | 'public_cloud' | 'vps'
+
+export interface Serveur {
+  id: number
+  clientId: number | null
+  name: string
+  hebergement: Hebergement
+  os: string
+  distribution: string | null
+  deploymentType: string | null
+  cloudProviderId: number | null
+  cloudVmId: string | null
+  cpu: number | null
+  ram: number | null
+  disk: number | null
+  ip: string | null
+  ssh: string | null
+  rdp: string | null
+  vpn: string | null
+  sauvegardes: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ServeurLiveSpec {
+  id: string
+  name: string
+  status: string
+  flavor: string
+  image: string | null
+  addresses: Record<string, { addr: string; version: number; 'OS-EXT-IPS:type': string }[]>
+  created_at: string
+  key_name: string | null
+  specs: { vcpus: number; ram: number; disk: number } | null
+}
+
+export type ServeurEventType = 'incident' | 'log' | 'update' | 'note'
+
+export interface ServeurEvent {
+  id: number
+  serveurId: number
+  type: ServeurEventType
+  message: string
+  createdAt: string
 }
 
 export interface DeploymentTemplateVariable {

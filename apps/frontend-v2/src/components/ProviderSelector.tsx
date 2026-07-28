@@ -84,7 +84,7 @@ export default function ProviderSelector() {
                       onClick={() => {
                         setActiveProvider(p.id)
                         setOpen(false)
-                        navigate('/')
+                        navigate(`/projects/${p.projectId}`)
                       }}
                     >
                       <div style={styles.optionName}>{p.name}</div>

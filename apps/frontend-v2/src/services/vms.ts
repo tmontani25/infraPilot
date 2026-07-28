@@ -16,6 +16,13 @@ export async function getVms(): Promise<VM[]> {
   return data
 }
 
+// Liste les VMs d'un compte cloud précis (pas forcément celui actif) — utilisé
+// pour choisir quelle VM lier à une fiche Serveur "Public Cloud".
+export async function getVmsForProvider(providerId: number): Promise<VM[]> {
+  const { data } = await api.get('/vms', { params: { providerId } })
+  return data
+}
+
 export async function startVm(id: string): Promise<void> {
   await api.post(`/vms/${id}/start`)
 }

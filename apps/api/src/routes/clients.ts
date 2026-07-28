@@ -20,8 +20,8 @@ export async function clientRoutes(server: FastifyInstance) {
 
   server.patch('/clients/:id', async (req, reply) => {
     const { id } = req.params as { id: string }
-    const { name } = req.body as { name: string }
-    const client = await clientService.updateClient(Number(id), name)
+    const body = req.body as { name?: string; address?: string | null; contacts?: string | null; contrats?: string | null }
+    const client = await clientService.updateClient(Number(id), body)
     reply.status(200)
     return success({ client })
   })
