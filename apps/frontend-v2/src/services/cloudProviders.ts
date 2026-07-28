@@ -14,6 +14,11 @@ export async function createCloudProvider(
   return data.data.provider
 }
 
+export async function updateCloudProvider(id: number, name: string): Promise<CloudProvider> {
+  const { data } = await api.patch(`/cloud-providers/${id}`, { name })
+  return data.data.provider
+}
+
 export async function deleteCloudProvider(id: number): Promise<void> {
   await api.delete(`/cloud-providers/${id}`)
 }

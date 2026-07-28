@@ -25,8 +25,8 @@ model Client {
 
 model Project {
   id             Int             @id @default(autoincrement())
-  clientId       Int
-  client         Client          @relation(fields: [clientId], references: [id])
+  clientId       Int?
+  client         Client?         @relation(fields: [clientId], references: [id])
   name           String
   cloudProviders CloudProvider[]
 

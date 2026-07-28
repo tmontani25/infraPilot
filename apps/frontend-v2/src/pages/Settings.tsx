@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useAuth } from '../authContext'
 import { useProviders } from '../providerContext'
-import { createClient, deleteClient } from '../services/clients'
-import { createProject, deleteProject } from '../services/projects'
-import { createCloudProvider, deleteCloudProvider } from '../services/cloudProviders'
-import type { Project, OpenstackCredentials } from '../types'
+import { createClient, updateClient, deleteClient } from '../services/clients'
+import { createProject, createIndependentProject, moveProject, deleteProject } from '../services/projects'
+import { createCloudProvider, updateCloudProvider, deleteCloudProvider } from '../services/cloudProviders'
+import { getErrorMessage } from '../lib/errors'
+import { useOpenstackTenantName } from '../components/ui/OpenstackTenantLabel'
+import type { Client, Project, OpenstackCredentials } from '../types'
 
 const ROLE_LABEL: Record<string, string> = {
   admin: 'Administrateur',
@@ -26,7 +28,7 @@ const EMPTY_OPENSTACK_CREDENTIALS: OpenstackCredentials = {
 
 export default function Settings() {
   const { user } = useAuth()
-  const { clients, projectsByClient, providers, refresh } = useProviders()
+  const { clients, projectsByClient, independentProjects, providers, refresh } = useProviders()
 
   return (
     <div style={{ padding: '24px', maxWidth: 640, display: 'flex', flexDirection: 'column', gap: 32 }}>
@@ -58,6 +60,24 @@ export default function Settings() {
         ))}
 
         <AddClientForm onCreated={refresh} />
+      </div>
+
+      <div>
+        <h2 style={{ marginBottom: 12, fontSize: 16, fontWeight: 600 }}>Projets indépendants</h2>
+        <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 16 }}>
+          Projets non rattachés à un client (ex: sandbox interne).
+        </p>
+
+        {independentProjects.map((project) => (
+          <ProjectBlock
+            key={project.id}
+            project={project}
+            providers={providers.filter((p) => p.projectId === project.id)}
+            onChanged={refresh}
+          />
+        ))}
+
+        <AddProjectForm clientId={null} onCreated={refresh} />
       </div>
     </div>
   )
@@ -95,18 +115,56 @@ function ClientBlock({
   onChanged: () => void
 }) {
   const [showAddProject, setShowAddProject] = useState(false)
+  const [renaming, setRenaming] = useState(false)
+  const [name, setName] = useState(client.name)
+  const [savingName, setSavingName] = useState(false)
 
   async function handleDeleteClient() {
-    if (!confirm(`Supprimer le client "${client.name}" et tous ses projets/comptes cloud ?`)) return
-    await deleteClient(client.id)
-    onChanged()
+    if (!confirm(`Supprimer le client "${client.name}" ?`)) return
+    try {
+      await deleteClient(client.id)
+      onChanged()
+    } catch (err) {
+      alert(getErrorMessage(err))
+    }
+  }
+
+  async function handleSaveName(e: React.FormEvent) {
+    e.preventDefault()
+    if (!name.trim() || name.trim() === client.name) { setRenaming(false); return }
+    setSavingName(true)
+    try {
+      await updateClient(client.id, name.trim())
+      setRenaming(false)
+      onChanged()
+    } finally {
+      setSavingName(false)
+    }
   }
 
   return (
     <div style={styles.clientBlock}>
       <div style={styles.clientHeader}>
-        <span style={{ fontWeight: 600, fontSize: 13 }}>{client.name}</span>
-        <button style={styles.linkBtn} onClick={handleDeleteClient}>Supprimer</button>
+        {renaming ? (
+          <form onSubmit={handleSaveName} style={{ display: 'flex', gap: 8, flex: 1 }}>
+            <input
+              style={styles.input}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              autoFocus
+            />
+            <button style={styles.primaryBtn} disabled={savingName}>Enregistrer</button>
+            <button type="button" style={styles.linkBtn} onClick={() => { setName(client.name); setRenaming(false) }}>Annuler</button>
+          </form>
+        ) : (
+          <>
+            <span style={{ fontWeight: 600, fontSize: 13 }}>{client.name}</span>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button style={styles.linkBtn} onClick={() => setRenaming(true)}>Renommer</button>
+              <button style={styles.linkBtn} onClick={handleDeleteClient}>Supprimer</button>
+            </div>
+          </>
+        )}
       </div>
 
       {projects.map((project) => (
@@ -141,32 +199,50 @@ function ProjectBlock({
   onChanged: () => void
 }) {
   const [showAddProvider, setShowAddProvider] = useState(false)
+  const [moving, setMoving] = useState(false)
+  const { clients } = useProviders()
 
   async function handleDeleteProject() {
-    if (!confirm(`Supprimer le projet "${project.name}" et tous ses comptes cloud ?`)) return
-    await deleteProject(project.id)
-    onChanged()
+    if (!confirm(`Supprimer le projet "${project.name}" ?`)) return
+    try {
+      await deleteProject(project.id)
+      onChanged()
+    } catch (err) {
+      alert(getErrorMessage(err))
+    }
   }
 
   async function handleDeleteProvider(id: number) {
     if (!confirm('Supprimer ce compte cloud ?')) return
-    await deleteCloudProvider(id)
-    onChanged()
+    try {
+      await deleteCloudProvider(id)
+      onChanged()
+    } catch (err) {
+      alert(getErrorMessage(err))
+    }
   }
 
   return (
     <div style={styles.projectBlock}>
       <div style={styles.projectHeader}>
         <span style={{ fontWeight: 500, fontSize: 12 }}>{project.name}</span>
-        <button style={styles.linkBtn} onClick={handleDeleteProject}>Supprimer</button>
+        <div style={{ display: 'flex', gap: 12 }}>
+          <button style={styles.linkBtn} onClick={() => setMoving((v) => !v)}>Déplacer</button>
+          <button style={styles.linkBtn} onClick={handleDeleteProject}>Supprimer</button>
+        </div>
       </div>
 
+      {moving && (
+        <MoveProjectForm
+          project={project}
+          clients={clients}
+          onMoved={() => { setMoving(false); onChanged() }}
+          onCancel={() => setMoving(false)}
+        />
+      )}
+
       {providers.map((p) => (
-        <div key={p.id} style={styles.providerRow}>
-          <span>{p.name}</span>
-          <span style={{ color: 'var(--text-secondary)', fontSize: 11 }}>{p.type}</span>
-          <button style={styles.linkBtn} onClick={() => handleDeleteProvider(p.id)}>Supprimer</button>
-        </div>
+        <ProviderRow key={p.id} provider={p} onDelete={handleDeleteProvider} onRenamed={onChanged} />
       ))}
 
       {showAddProvider ? (
@@ -179,6 +255,96 @@ function ProjectBlock({
         <button style={styles.addBtn} onClick={() => setShowAddProvider(true)}>+ Ajouter un compte cloud</button>
       )}
     </div>
+  )
+}
+
+function ProviderRow({
+  provider,
+  onDelete,
+  onRenamed,
+}: {
+  provider: { id: number; name: string; type: string }
+  onDelete: (id: number) => void
+  onRenamed: () => void
+}) {
+  const tenantName = useOpenstackTenantName(provider.id, provider.type)
+  const [syncing, setSyncing] = useState(false)
+
+  async function handleUseTenantName() {
+    if (!tenantName) return
+    setSyncing(true)
+    try {
+      await updateCloudProvider(provider.id, tenantName)
+      onRenamed()
+    } catch (err) {
+      alert(getErrorMessage(err))
+    } finally {
+      setSyncing(false)
+    }
+  }
+
+  return (
+    <div style={styles.providerRow}>
+      <span>{provider.name}</span>
+      <span style={{ color: 'var(--text-secondary)', fontSize: 11 }}>{provider.type}</span>
+      {tenantName && (
+        <span style={{ color: 'var(--text-muted)', fontSize: 10, display: 'flex', gap: 6, alignItems: 'center' }}>
+          tenant OpenStack : {tenantName}
+          {tenantName !== provider.name && (
+            <button style={styles.linkBtn} disabled={syncing} onClick={handleUseTenantName}>
+              {syncing ? 'Renommage…' : 'Utiliser ce nom'}
+            </button>
+          )}
+        </span>
+      )}
+      <button style={styles.linkBtn} onClick={() => onDelete(provider.id)}>Supprimer</button>
+    </div>
+  )
+}
+
+function MoveProjectForm({
+  project,
+  clients,
+  onMoved,
+  onCancel,
+}: {
+  project: Project
+  clients: Client[]
+  onMoved: () => void
+  onCancel: () => void
+}) {
+  const [target, setTarget] = useState<string>(project.clientId != null ? String(project.clientId) : 'independent')
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setSubmitting(true)
+    setError(null)
+    try {
+      await moveProject(project.id, target === 'independent' ? null : Number(target))
+      onMoved()
+    } catch (err) {
+      setError(getErrorMessage(err))
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} style={{ ...styles.providerForm, marginLeft: 0 }}>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <select style={styles.input} value={target} onChange={(e) => setTarget(e.target.value)}>
+          <option value="independent">Aucun client (indépendant)</option>
+          {clients.map((c) => (
+            <option key={c.id} value={c.id}>{c.name}</option>
+          ))}
+        </select>
+        <button style={styles.primaryBtn} disabled={submitting}>Déplacer</button>
+        <button type="button" style={styles.linkBtn} onClick={onCancel}>Annuler</button>
+      </div>
+      {error && <div style={{ color: 'var(--red)', fontSize: 12 }}>{error}</div>}
+    </form>
   )
 }
 
@@ -217,9 +383,9 @@ function AddProjectForm({
   onCreated,
   onCancel,
 }: {
-  clientId: number
+  clientId: number | null
   onCreated: () => void
-  onCancel: () => void
+  onCancel?: () => void
 }) {
   const [name, setName] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -231,7 +397,9 @@ function AddProjectForm({
     setSubmitting(true)
     setError(null)
     try {
-      await createProject(clientId, name.trim())
+      if (clientId != null) await createProject(clientId, name.trim())
+      else await createIndependentProject(name.trim())
+      setName('')
       onCreated()
     } catch (err: any) {
       setError(err?.response?.data?.message ?? 'Erreur lors de la création')
@@ -241,21 +409,19 @@ function AddProjectForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ ...styles.providerForm, marginLeft: 0 }}>
+    <form onSubmit={handleSubmit} style={{ ...styles.providerForm, marginLeft: 0, marginTop: onCancel ? 8 : 12 }}>
       <div style={{ display: 'flex', gap: 8 }}>
         <input
           style={styles.input}
           placeholder="Nom du projet (ex: Infra prod)"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          autoFocus
+          autoFocus={!!onCancel}
         />
+        <button style={styles.primaryBtn} disabled={submitting}>Créer</button>
+        {onCancel && <button type="button" style={styles.linkBtn} onClick={onCancel}>Annuler</button>}
       </div>
       {error && <div style={{ color: 'var(--red)', fontSize: 12 }}>{error}</div>}
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button style={styles.primaryBtn} disabled={submitting}>Créer</button>
-        <button type="button" style={styles.linkBtn} onClick={onCancel}>Annuler</button>
-      </div>
     </form>
   )
 }

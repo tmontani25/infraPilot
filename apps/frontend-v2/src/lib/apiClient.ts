@@ -18,7 +18,9 @@ const ROUTES_WITHOUT_PROVIDER = ['/auth/', '/clients']
 
 api.interceptors.request.use((config) => {
     const needsProvider = !ROUTES_WITHOUT_PROVIDER.some(route => config.url?.includes(route))
-    if (needsProvider && activeProviderId != null) {
+    // un appel peut déjà préciser son propre providerId (ex: consulter un compte
+    // qui n'est pas celui actif) — dans ce cas on ne l'écrase pas
+    if (needsProvider && activeProviderId != null && config.params?.providerId == null) {
         config.params = { ...config.params, providerId: activeProviderId }
     }
     return config

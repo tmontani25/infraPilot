@@ -18,6 +18,14 @@ export async function clientRoutes(server: FastifyInstance) {
     return success({ client })
   })
 
+  server.patch('/clients/:id', async (req, reply) => {
+    const { id } = req.params as { id: string }
+    const { name } = req.body as { name: string }
+    const client = await clientService.updateClient(Number(id), name)
+    reply.status(200)
+    return success({ client })
+  })
+
   server.delete('/clients/:id', async (req, _reply) => {
     const { id } = req.params as { id: string }
     await clientService.deleteClient(Number(id))

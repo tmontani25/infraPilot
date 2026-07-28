@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { IconServer, IconChevronDown } from '@tabler/icons-react'
 import { useProviders } from '../providerContext'
+import OpenstackTenantLabel from './ui/OpenstackTenantLabel'
 
 export default function ProviderSelector() {
   const { clients, providers, activeProviderId, setActiveProvider, loading } = useProviders()
@@ -11,21 +12,32 @@ export default function ProviderSelector() {
 
   const active = providers.find((p) => p.id === activeProviderId)
 
-  // regroupe les comptes cloud par client puis par projet, pour retrouver
-  // visuellement le flow client -> projet -> compte cloud
-  const groups = clients
-    .map((client) => {
-      const clientProviders = providers.filter((p) => p.clientId === client.id)
-      const projectNames = [...new Set(clientProviders.map((p) => p.projectName))]
-      return {
-        client,
-        projects: projectNames.map((projectName) => ({
-          projectName,
-          providers: clientProviders.filter((p) => p.projectName === projectName),
-        })),
-      }
-    })
+  // regroupe les comptes cloud par client puis par projet (+ un groupe à part pour
+  // les projets indépendants, sans client), pour retrouver visuellement le flow
+  // client -> projet -> compte cloud
+  function projectGroups(groupProviders: typeof providers) {
+    const projectNames = [...new Set(groupProviders.map((p) => p.projectName))]
+    return projectNames.map((projectName) => ({
+      projectName,
+      providers: groupProviders.filter((p) => p.projectName === projectName),
+    }))
+  }
+
+  const clientGroups = clients
+    .map((client) => ({
+      key: `client-${client.id}`,
+      label: client.name,
+      projects: projectGroups(providers.filter((p) => p.clientId === client.id)),
+    }))
     .filter((g) => g.projects.length > 0)
+
+  const independentGroup = {
+    key: 'independent',
+    label: 'Projets indépendants',
+    projects: projectGroups(providers.filter((p) => p.clientId == null)),
+  }
+
+  const groups = independentGroup.projects.length > 0 ? [...clientGroups, independentGroup] : clientGroups
 
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
@@ -50,15 +62,15 @@ export default function ProviderSelector() {
     <div ref={ref} style={{ position: 'relative' }}>
       <div style={styles.trigger} onClick={() => setOpen((v) => !v)}>
         <IconServer size={13} color="#60a5fa" />
-        <span>{active ? `${active.clientName} · ${active.projectName} · ${active.name}` : 'Choisir un compte cloud'}</span>
+        <span>{active ? `${active.clientName || 'Indépendant'} · ${active.projectName} · ${active.name}` : 'Choisir un compte cloud'}</span>
         <IconChevronDown size={12} />
       </div>
 
       {open && (
         <div style={styles.dropdown}>
           {groups.map((g) => (
-            <div key={g.client.id}>
-              <div style={styles.groupClient}>{g.client.name}</div>
+            <div key={g.key}>
+              <div style={styles.groupClient}>{g.label}</div>
               {g.projects.map((proj) => (
                 <div key={proj.projectName}>
                   <div style={styles.groupProject}>{proj.projectName}</div>
@@ -72,10 +84,14 @@ export default function ProviderSelector() {
                       onClick={() => {
                         setActiveProvider(p.id)
                         setOpen(false)
+                        navigate('/')
                       }}
                     >
                       <div style={styles.optionName}>{p.name}</div>
-                      <div style={styles.optionMeta}>{p.type}</div>
+                      <div style={{ ...styles.optionMeta, display: 'flex', gap: 8 }}>
+                        <span>{p.type}</span>
+                        <OpenstackTenantLabel providerId={p.id} type={p.type} />
+                      </div>
                     </div>
                   ))}
                 </div>

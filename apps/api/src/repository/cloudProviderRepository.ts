@@ -14,6 +14,10 @@ export async function create(data: { projectId: number; type: string; name: stri
     return prisma.cloudProvider.create({ data, select: publicSelect })
 }
 
+export async function updateName(id: number, name: string) {
+    return prisma.cloudProvider.update({ where: { id }, data: { name }, select: publicSelect })
+}
+
 export async function remove(id: number) {
     return prisma.cloudProvider.delete({ where: { id } })
 }

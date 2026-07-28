@@ -1,4 +1,4 @@
-from app.cache import ttl_cache
+from app.cache import ttl_cache, invalidate
 
 @ttl_cache(ttl=30)
 def list_vms_service(conn):
@@ -36,19 +36,24 @@ def create_vm_service(conn, name: str, image_id: str, flavor_id: str, network_id
         flavor_id=flavor_id,
         networks=[{"uuid": network_id}]
     )
+    invalidate(list_vms_service)
     return {"id": vm.id, "name": vm.name, "status": vm.status}
 
 def delete_vm_service(conn, vm_id: str):
     conn.compute.delete_server(vm_id)
+    invalidate(list_vms_service)
 
 def start_vm_service(conn, vm_id: str):
     conn.compute.start_server(vm_id)
+    invalidate(list_vms_service)
 
 def stop_vm_service(conn, vm_id: str):
     conn.compute.stop_server(vm_id)
+    invalidate(list_vms_service)
 
 def reboot_vm_service(conn, vm_id: str):
     conn.compute.reboot_server(vm_id)
+    invalidate(list_vms_service)
 
 def get_volumes_by_vm_service(conn, vm_id: str):
     vm = conn.compute.get_server(vm_id)

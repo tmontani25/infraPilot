@@ -98,7 +98,7 @@ export interface Client {
 
 export interface Project {
   id: number
-  clientId: number
+  clientId: number | null
   name: string
 }
 

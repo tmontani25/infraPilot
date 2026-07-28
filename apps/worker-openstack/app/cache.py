@@ -22,3 +22,14 @@ def ttl_cache(ttl: int = 30):
             return result
         return wrapper
     return decorator
+
+
+def invalidate(cached_fn):
+    """Vide toutes les entrées en cache d'une fonction décorée par ttl_cache.
+    À appeler après une action qui change les données qu'elle renvoie (ex:
+    supprimer une VM doit invalider list_vms_service), sinon le résultat mis
+    en cache continue d'être servi jusqu'à expiration du TTL."""
+    prefix = cached_fn.__name__
+    with _lock:
+        for key in [k for k in _store if k[0] == prefix]:
+            del _store[key]

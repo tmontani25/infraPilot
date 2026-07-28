@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { getClients } from './services/clients'
-import { getProjects } from './services/projects'
+import { getProjects, getIndependentProjects } from './services/projects'
 import { getCloudProviders } from './services/cloudProviders'
 import { setActiveProviderId } from './lib/apiClient'
 import type { Client, Project, CloudProvider } from './types'
@@ -8,14 +8,16 @@ import { useAuth } from './authContext'
 
 const STORAGE_KEY = 'infrapilot.activeProviderId'
 
-// Un compte cloud (CloudProvider) appartient à un Projet, qui appartient à un Client :
+// Un compte cloud (CloudProvider) appartient à un Projet, qui appartient (ou pas) à un Client :
 // Client (ex: "Étude d'avocats X") -> Projet (ex: "Infra prod") -> Compte cloud (OpenStack/Proxmox/...).
-export type ProviderWithContext = CloudProvider & { clientId: number; clientName: string; projectName: string }
+// Un projet sans client (clientId null) est un "projet indépendant" (ex: sandbox interne).
+export type ProviderWithContext = CloudProvider & { clientId: number | null; clientName: string; projectName: string }
 
 type ProviderContextType = {
   loading: boolean
   clients: Client[]
   projectsByClient: Record<number, Project[]>
+  independentProjects: Project[]
   providers: ProviderWithContext[]
   activeProviderId: number | null
   setActiveProvider: (id: number | null) => void
@@ -35,6 +37,7 @@ export function ProviderProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
   const [clients, setClients] = useState<Client[]>([])
   const [projectsByClient, setProjectsByClient] = useState<Record<number, Project[]>>({})
+  const [independentProjects, setIndependentProjects] = useState<Project[]>([])
   const [providers, setProviders] = useState<ProviderWithContext[]>([])
   const [activeProviderId, setActiveProviderIdState] = useState<number | null>(() => {
     const stored = localStorage.getItem(STORAGE_KEY)
@@ -59,14 +62,25 @@ export function ProviderProvider({ children }: { children: React.ReactNode }) {
       clientList.forEach((c, i) => { projectsByClientMap[c.id] = projectsPerClient[i] })
       setProjectsByClient(projectsByClientMap)
 
-      const allProjects = clientList.flatMap((client) =>
-        (projectsByClientMap[client.id] ?? []).map((project) => ({ project, client }))
-      )
+      const independentList = await getIndependentProjects()
+      setIndependentProjects(independentList)
+
+      const allProjectEntries = [
+        ...clientList.flatMap((client) =>
+          (projectsByClientMap[client.id] ?? []).map((project) => ({ project, client }))
+        ),
+        ...independentList.map((project) => ({ project, client: null as Client | null })),
+      ]
       const providersPerProject = await Promise.all(
-        allProjects.map(({ project }) => getCloudProviders(project.id))
+        allProjectEntries.map(({ project }) => getCloudProviders(project.id))
       )
-      const allProviders: ProviderWithContext[] = allProjects.flatMap(({ project, client }, i) =>
-        providersPerProject[i].map((p) => ({ ...p, clientId: client.id, clientName: client.name, projectName: project.name }))
+      const allProviders: ProviderWithContext[] = allProjectEntries.flatMap(({ project, client }, i) =>
+        providersPerProject[i].map((p) => ({
+          ...p,
+          clientId: client?.id ?? null,
+          clientName: client?.name ?? '',
+          projectName: project.name,
+        }))
       )
       setProviders(allProviders)
 
@@ -92,7 +106,7 @@ export function ProviderProvider({ children }: { children: React.ReactNode }) {
   }, [user])
 
   return (
-    <ProviderContext.Provider value={{ loading, clients, projectsByClient, providers, activeProviderId, setActiveProvider, refresh }}>
+    <ProviderContext.Provider value={{ loading, clients, projectsByClient, independentProjects, providers, activeProviderId, setActiveProvider, refresh }}>
       {children}
     </ProviderContext.Provider>
   )

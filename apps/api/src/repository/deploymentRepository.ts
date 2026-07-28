@@ -12,6 +12,10 @@ export async function findById(id: number) {
     return prisma.deployment.findUnique({ where: { id } })
 }
 
+export async function findByProviderId(providerId: number) {
+    return prisma.deployment.findMany({ where: { providerId } })
+}
+
 export async function update(id: number, data: Partial<{
     status: string
     planOutput: string

@@ -20,6 +20,14 @@ export async function cloudProviderRoutes(server: FastifyInstance) {
     return success({ provider })
   })
 
+  server.patch('/cloud-providers/:id', async (req, reply) => {
+    const { id } = req.params as { id: string }
+    const { name } = req.body as { name: string }
+    const provider = await cloudProviderService.renameCloudProvider(Number(id), name)
+    reply.status(200)
+    return success({ provider })
+  })
+
   server.delete('/cloud-providers/:id', async (req, _reply) => {
     const { id } = req.params as { id: string }
     await cloudProviderService.deleteCloudProvider(Number(id))

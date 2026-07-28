@@ -1,8 +1,9 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { IconLayoutDashboard, IconCloud, IconRocket, IconLogout, IconSettings } from '@tabler/icons-react'
+import { IconLayoutDashboard, IconCloud, IconRocket, IconBuilding, IconLogout, IconSettings } from '@tabler/icons-react'
 import { useAuth } from '../authContext'
 
 const NAV = [
+  { path: '/clients',     label: 'Clients',      icon: <IconBuilding size={14} color="#f59e0b" />, sub: 'Projets par client', match: ['/clients', '/projects'] },
   { path: '/',            label: 'Overview',     icon: <IconLayoutDashboard size={14} />, sub: null },
   { path: '/resources',   label: 'Instances',    icon: <IconCloud size={14} color="#60a5fa" />, sub: 'VMs', section: 'OpenStack Infomaniak' },
   { path: '/network',     label: 'Network',      icon: <IconCloud size={14} color="#a78bfa" />, sub: 'Réseaux · Subnets · SG' },
@@ -37,7 +38,7 @@ export default function Sidebar() {
             </>
           )}
           <div
-            className={`sb-item ${pathname === item.path ? 'active' : ''}`}
+            className={`sb-item ${(item.match ? item.match.some((m) => pathname.startsWith(m)) : pathname === item.path) ? 'active' : ''}`}
             onClick={() => navigate(item.path)}
           >
             {item.icon}
