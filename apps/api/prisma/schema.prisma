@@ -13,12 +13,21 @@ model User {
 	username  String		@unique
 	passwordHash  String
 	role			String @default("member")
+	clients   Client[]
+}
+
+model Client {
+  id             Int             @id @default(autoincrement())
+  name           String          @unique
+  users          User[]
+  cloudProviders CloudProvider[]
 }
 
 model CloudProvider {
-  id          Int     @id
+  id          Int     @id @default(autoincrement())
   clientId    Int
+  client      Client  @relation(fields: [clientId], references: [id])
   type        String  // "openstack" | "proxmox" | "hetzner"
   name        String
-  credentials Json  	// structure différente selon le type, chiffrée openstack proxmox vps
+  credentials String  // JSON chiffré (AES-256-GCM), jamais stocké en clair
 }

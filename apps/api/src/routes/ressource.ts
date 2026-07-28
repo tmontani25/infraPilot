@@ -1,37 +1,44 @@
 import type { FastifyInstance } from 'fastify'
 import * as workerService from '../services/openstack.js'
 import authenticate from '../plugins/authenticate.js'
+import { validateQuery, providerIdQuerySchema } from '../utils/validation.js'
 
 export async function ressourceRoutes(server: FastifyInstance) {
   server.addHook('preHandler', authenticate)
 
-  server.get('/networks', async (_req, reply) => {
-    const data = await workerService.getNetworks()
+  server.get('/networks', async (req, reply) => {
+    const { providerId } = validateQuery(providerIdQuerySchema, req.query)
+    const data = await workerService.getNetworks(providerId)
     return reply.send(data)
   })
 
-  server.get('/images', async (_req, reply) => {
-    const data = await workerService.getImages()
+  server.get('/images', async (req, reply) => {
+    const { providerId } = validateQuery(providerIdQuerySchema, req.query)
+    const data = await workerService.getImages(providerId)
     return reply.send(data)
   })
 
-  server.get('/flavors', async (_req, reply) => {
-    const data = await workerService.getFlavors()
+  server.get('/flavors', async (req, reply) => {
+    const { providerId } = validateQuery(providerIdQuerySchema, req.query)
+    const data = await workerService.getFlavors(providerId)
     return reply.send(data)
   })
 
-  server.get('/subnets', async (_req, reply) => {
-    const data = await workerService.getSubnets()
+  server.get('/subnets', async (req, reply) => {
+    const { providerId } = validateQuery(providerIdQuerySchema, req.query)
+    const data = await workerService.getSubnets(providerId)
     return reply.send(data)
   })
 
-  server.get('/security-groups', async (_req, reply) => {
-    const data = await workerService.getSecurityGroups()
+  server.get('/security-groups', async (req, reply) => {
+    const { providerId } = validateQuery(providerIdQuerySchema, req.query)
+    const data = await workerService.getSecurityGroups(providerId)
     return reply.send(data)
   })
 
-  server.get('/keypairs', async (_req, reply) => {
-    const data = await workerService.getKeypairs()
+  server.get('/keypairs', async (req, reply) => {
+    const { providerId } = validateQuery(providerIdQuerySchema, req.query)
+    const data = await workerService.getKeypairs(providerId)
     return reply.send(data)
   })
 }

@@ -1,15 +1,14 @@
 from concurrent.futures import ThreadPoolExecutor
-from app.connection import conn
 from app.cache import ttl_cache
 
-def list_images_service():
+def list_images_service(conn):
     return [{"id": img.id, "name": img.name} for img in conn.image.images()]
 
-def list_flavors_service():
+def list_flavors_service(conn):
     return [{"id": f.id, "name": f.name, "ram": f.ram, "vcpus": f.vcpus, "disk": f.disk} for f in conn.compute.flavors()]
 
 @ttl_cache(ttl=30)
-def list_networks_service():
+def list_networks_service(conn):
     with ThreadPoolExecutor(max_workers=4) as ex:
         f_networks = ex.submit(lambda: list(conn.network.networks()))
         f_subnets  = ex.submit(lambda: list(conn.network.subnets()))
@@ -50,11 +49,11 @@ def list_networks_service():
         for net in networks
     ]
 
-def list_subnets_service():
+def list_subnets_service(conn):
     return [{"id": s.id, "name": s.name, "cidr": s.cidr, "network_id": s.network_id} for s in conn.network.subnets()]
 
 @ttl_cache(ttl=30)
-def list_security_groups_service():
+def list_security_groups_service(conn):
     with ThreadPoolExecutor(max_workers=3) as ex:
         f_sgs   = ex.submit(lambda: list(conn.network.security_groups()))
         f_ports = ex.submit(lambda: list(conn.network.ports()))
@@ -89,5 +88,5 @@ def list_security_groups_service():
         } for sg in sgs
     ]
 
-def get_ssh_keys_service():
+def get_ssh_keys_service(conn):
     return [{"id": kp.id, "name": kp.name, "public_key": kp.public_key} for kp in conn.compute.keypairs()]

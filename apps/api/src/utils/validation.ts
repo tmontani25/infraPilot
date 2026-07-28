@@ -79,6 +79,15 @@ export const paginationSchema = z.object({
     limit: z.coerce.number().int().positive().max(100).default(20)
 })
 
+/**
+ * Validates the providerId query param used to select which CloudProvider
+ * (compte cloud) a worker call should be made against
+ * Usage: validateQuery(providerIdQuerySchema, request.query)
+ */
+export const providerIdQuerySchema = z.object({
+    providerId: z.coerce.number().int().positive('providerId is required')
+})
+
 export const registerSchema = z.object({
     username: z.string().min(1, 'Username is required'),
     email: z.string().email('Invalid email format'),

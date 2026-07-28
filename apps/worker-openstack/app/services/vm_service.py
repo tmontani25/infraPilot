@@ -1,12 +1,11 @@
-from app.connection import conn
 from app.cache import ttl_cache
 
 @ttl_cache(ttl=30)
-def list_vms_service():
+def list_vms_service(conn):
     servers = conn.compute.servers()
     return [{"id": vm.id, "name": vm.name, "status": vm.status} for vm in servers]
 
-def get_vm_by_id_service(vm_id: str):
+def get_vm_by_id_service(conn, vm_id: str):
     vm = conn.compute.get_server(vm_id)
     return {
         "id": vm.id,
@@ -19,7 +18,7 @@ def get_vm_by_id_service(vm_id: str):
         "key_name": vm.key_name,
     }
 
-def create_vm_service(name: str, image_id: str, flavor_id: str, network_id: str):
+def create_vm_service(conn, name: str, image_id: str, flavor_id: str, network_id: str):
     vm = conn.compute.create_server(
         name=name,
         image_id=image_id,
@@ -28,19 +27,19 @@ def create_vm_service(name: str, image_id: str, flavor_id: str, network_id: str)
     )
     return {"id": vm.id, "name": vm.name, "status": vm.status}
 
-def delete_vm_service(vm_id: str):
+def delete_vm_service(conn, vm_id: str):
     conn.compute.delete_server(vm_id)
 
-def start_vm_service(vm_id: str):
+def start_vm_service(conn, vm_id: str):
     conn.compute.start_server(vm_id)
 
-def stop_vm_service(vm_id: str):
+def stop_vm_service(conn, vm_id: str):
     conn.compute.stop_server(vm_id)
 
-def reboot_vm_service(vm_id: str):
+def reboot_vm_service(conn, vm_id: str):
     conn.compute.reboot_server(vm_id)
 
-def get_volumes_by_vm_service(vm_id: str):
+def get_volumes_by_vm_service(conn, vm_id: str):
     vm = conn.compute.get_server(vm_id)
     volumes = [conn.block_storage.get_volume(v["id"]) for v in vm.attached_volumes]
     return [{"id": vol.id, "name": vol.name, "size": vol.size, "status": vol.status} for vol in volumes]

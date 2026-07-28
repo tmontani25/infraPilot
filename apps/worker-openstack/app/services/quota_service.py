@@ -1,8 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
-from app.connection import conn
 
 
-def get_quotas_service():
+def get_quotas_service(conn):
     project_id = conn.current_project_id
     result = {}
 

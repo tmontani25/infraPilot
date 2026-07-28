@@ -1,12 +1,12 @@
 import os
-from fastapi import APIRouter
-from app.connection import conn
+from fastapi import APIRouter, Depends
+from app.deps import get_conn
 
 router = APIRouter(prefix="/api/v1")
 
 
 @router.get("/project")
-def get_project():
+def get_project(conn=Depends(get_conn)):
     name = None
     try:
         name = conn.current_project.name
