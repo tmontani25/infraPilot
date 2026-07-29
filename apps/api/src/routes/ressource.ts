@@ -41,4 +41,10 @@ export async function ressourceRoutes(server: FastifyInstance) {
     const data = await workerService.getKeypairs(providerId)
     return reply.send(data)
   })
+
+  server.get('/hypervisors', async (req, reply) => {
+    const { providerId } = validateQuery(providerIdQuerySchema, req.query)
+    const data = await workerService.getHypervisors(providerId)
+    return reply.send(data)
+  })
 }

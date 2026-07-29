@@ -120,3 +120,7 @@ export async function getSecurityGroups(providerId: number) {
 export async function getKeypairs(providerId: number) {
   return workerFetch(providerId, '/keypairs')
 }
+
+export async function getHypervisors(providerId: number) {
+  return workerFetch(providerId, '/hypervisors')
+}

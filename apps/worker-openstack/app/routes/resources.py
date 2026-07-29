@@ -27,3 +27,7 @@ def list_security_groups(conn=Depends(get_conn)):
 @router.get("/keypairs")
 def list_keypairs(conn=Depends(get_conn)):
     return resource_service.get_ssh_keys_service(conn)
+
+@router.get("/hypervisors")
+def list_hypervisors(conn=Depends(get_conn)):
+    return resource_service.list_hypervisors_service(conn)

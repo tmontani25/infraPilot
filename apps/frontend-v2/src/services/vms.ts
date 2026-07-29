@@ -1,5 +1,5 @@
 import { api } from '../lib/apiClient'
-import type { VM, VMDetail, Volume } from '../types'
+import type { VM, VMDetail, Volume, Hypervisor } from '../types'
 
 export async function getVm(id: string): Promise<VMDetail> {
   const { data } = await api.get(`/vms/${id}`)
@@ -20,6 +20,13 @@ export async function getVms(): Promise<VM[]> {
 // pour choisir quelle VM lier à une fiche Serveur "Public Cloud".
 export async function getVmsForProvider(providerId: number): Promise<VM[]> {
   const { data } = await api.get('/vms', { params: { providerId } })
+  return data
+}
+
+// Peut échouer en 403 : sur un cloud public, les credentials d'un projet client
+// n'ont généralement pas les droits admin nécessaires pour lister les hyperviseurs.
+export async function getHypervisorsForProvider(providerId: number): Promise<Hypervisor[]> {
+  const { data } = await api.get('/hypervisors', { params: { providerId } })
   return data
 }
 

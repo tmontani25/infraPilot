@@ -86,6 +86,20 @@ export interface Flavor {
   disk: number
 }
 
+// API admin Nova — non disponible sur les clouds publics (ex: Infomaniak) où les
+// credentials d'un projet client n'ont pas les droits d'opérateur d'infrastructure.
+export interface Hypervisor {
+  id: string
+  name: string
+  state: 'up' | 'down'
+  status: 'enabled' | 'disabled'
+  vcpus: number
+  vcpus_used: number
+  memory_mb: number
+  memory_used_mb: number
+  running_vms: number
+}
+
 export interface Keypair {
   name: string
   fingerprint: string

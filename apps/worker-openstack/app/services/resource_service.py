@@ -90,3 +90,23 @@ def list_security_groups_service(conn):
 
 def get_ssh_keys_service(conn):
     return [{"id": kp.id, "name": kp.name, "public_key": kp.public_key} for kp in conn.compute.keypairs()]
+
+# Liste les hyperviseurs (API admin Nova) : disponibilité et charge de l'infra physique.
+# Sur un cloud public (ex: Infomaniak), les credentials d'un projet client n'ont
+# généralement pas les droits admin nécessaires — l'appel peut légitimement échouer
+# en 403, géré comme les autres erreurs HTTP par error_handler.py.
+def list_hypervisors_service(conn):
+    return [
+        {
+            "id": h.id,
+            "name": getattr(h, "hypervisor_hostname", None) or getattr(h, "name", h.id),
+            "state": h.state,
+            "status": h.status,
+            "vcpus": h.vcpus,
+            "vcpus_used": h.vcpus_used,
+            "memory_mb": h.memory_size,
+            "memory_used_mb": h.memory_used,
+            "running_vms": h.running_vms,
+        }
+        for h in conn.compute.hypervisors(details=True)
+    ]
