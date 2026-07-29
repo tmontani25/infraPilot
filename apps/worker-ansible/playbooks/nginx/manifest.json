@@ -1,0 +1,5 @@
+{
+  "id": "nginx",
+  "name": "Installer Nginx",
+  "description": "Installe et démarre Nginx sur les machines cibles (Debian/Ubuntu). Exemple de playbook de provisionnement basique."
+}

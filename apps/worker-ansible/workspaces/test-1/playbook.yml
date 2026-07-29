@@ -1,0 +1,5 @@
+- hosts: targets
+  gather_facts: false
+  tasks:
+    - name: Vérifier la connectivité SSH
+      ansible.builtin.ping:

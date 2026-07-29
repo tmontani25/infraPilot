@@ -1,0 +1,5 @@
+{
+  "id": "ping",
+  "name": "Test de connectivité (ping)",
+  "description": "Vérifie que les machines cibles sont joignables en SSH et répondent (module ansible.builtin.ping). Utile pour valider une nouvelle infra avant d'appliquer un vrai playbook."
+}
