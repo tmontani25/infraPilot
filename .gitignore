@@ -33,6 +33,11 @@ node_modules/
 # OpenTofu (workspaces/ contient les copies runtime par déploiement : state, plan, providers)
 apps/worker-opentofu/workspaces/*
 !apps/worker-opentofu/workspaces/.gitkeep
+apps/worker-opentofu/.terraform-plugin-cache/
+
+# Ansible (workspaces/ contient les copies runtime par exécution : inventaire, playbook)
+apps/worker-ansible/workspaces/*
+!apps/worker-ansible/workspaces/.gitkeep
 .terraform/
 .terraform.lock.hcl
 *.tfstate

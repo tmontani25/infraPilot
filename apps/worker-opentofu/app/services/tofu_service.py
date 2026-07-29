@@ -10,9 +10,22 @@ from app.services.template_registry import get_template_dir
 WORKSPACES_DIR = Path(__file__).resolve().parent.parent.parent / "workspaces"
 TIMEOUT_SECONDS = 300
 
+# Cache partagé des plugins provider entre workspaces : chaque déploiement est un
+# workspace neuf (copié depuis le template), donc sans ce cache `tofu init` retélécharge
+# le provider OpenStack depuis registry.opentofu.org à chaque fois — fragile face aux
+# aléas réseau et inutilement lent une fois le provider déjà téléchargé une première fois.
+PLUGIN_CACHE_DIR = Path(__file__).resolve().parent.parent.parent / ".terraform-plugin-cache"
+PLUGIN_CACHE_DIR.mkdir(exist_ok=True)
+
 
 def _workspace_dir(deployment_id: str) -> Path:
     return WORKSPACES_DIR / deployment_id
+
+
+def _env_with_cache(credentials: dict) -> dict:
+    env = build_env(credentials)
+    env["TF_PLUGIN_CACHE_DIR"] = str(PLUGIN_CACHE_DIR)
+    return env
 
 
 def _run(args: list[str], cwd: Path, env: dict) -> tuple[bool, str]:
@@ -43,7 +56,7 @@ def create_and_plan(deployment_id: str, template_id: str, variables: dict, crede
     shutil.copytree(template_dir, workspace)
     (workspace / "template.json").unlink(missing_ok=True)
 
-    env = build_env(credentials)
+    env = _env_with_cache(credentials)
 
     ok, init_output = _run(["tofu", "init", "-input=false"], cwd=workspace, env=env)
     if not ok:
@@ -62,7 +75,7 @@ def apply(deployment_id: str, credentials: dict) -> dict:
     if not workspace.exists():
         raise HTTPException(status_code=404, detail="Workspace introuvable, relancez un plan d'abord")
 
-    env = build_env(credentials)
+    env = _env_with_cache(credentials)
     ok, apply_output = _run(["tofu", "apply", "-input=false", "-auto-approve", "tfplan"], cwd=workspace, env=env)
     if not ok:
         return {"status": "failed", "output": apply_output}
@@ -81,7 +94,7 @@ def destroy(deployment_id: str, variables: dict, credentials: dict) -> dict:
     if not workspace.exists():
         raise HTTPException(status_code=404, detail="Workspace introuvable")
 
-    env = build_env(credentials)
+    env = _env_with_cache(credentials)
     destroy_args = ["tofu", "destroy", "-input=false", "-auto-approve"] + _tfvars_args(variables)
     ok, destroy_output = _run(destroy_args, cwd=workspace, env=env)
     if not ok:

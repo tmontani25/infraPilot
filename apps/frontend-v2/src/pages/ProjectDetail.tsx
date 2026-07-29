@@ -11,14 +11,18 @@ import NetworkPage from './Network'
 import Datastore from './Datastore'
 import NewDeploymentForm, { type DeploymentPrefill } from '../components/deployments/NewDeploymentForm'
 import DeploymentHistoryTable from '../components/deployments/DeploymentHistoryTable'
-import type { Project, CloudProvider, DeploymentTemplate, Deployment } from '../types'
+import NewPlaybookRunForm from '../components/playbooks/NewPlaybookRunForm'
+import PlaybookRunHistoryTable from '../components/playbooks/PlaybookRunHistoryTable'
+import { getPlaybookRuns } from '../services/playbookRuns'
+import type { Project, CloudProvider, DeploymentTemplate, Deployment, PlaybookRun } from '../types'
 
-type Tab = 'vue' | 'reseau' | 'deploiement' | 'logs'
+type Tab = 'vue' | 'reseau' | 'deploiement' | 'provisionnement' | 'logs'
 const TABS: { id: Tab; label: string }[] = [
-  { id: 'vue',         label: 'Vue' },
-  { id: 'reseau',      label: 'Réseau' },
-  { id: 'deploiement', label: 'Déploiement' },
-  { id: 'logs',        label: 'Logs' },
+  { id: 'vue',             label: 'Vue' },
+  { id: 'reseau',          label: 'Réseau' },
+  { id: 'deploiement',     label: 'Déploiement' },
+  { id: 'provisionnement', label: 'Provisionnement' },
+  { id: 'logs',            label: 'Logs' },
 ]
 
 export default function ProjectDetail() {
@@ -30,6 +34,7 @@ export default function ProjectDetail() {
   const [providers, setProviders] = useState<CloudProvider[]>([])
   const [templates, setTemplates] = useState<DeploymentTemplate[]>([])
   const [deployments, setDeployments] = useState<Deployment[]>([])
+  const [playbookRuns, setPlaybookRuns] = useState<PlaybookRun[]>([])
   const [tab, setTab] = useState<Tab>('vue')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -74,6 +79,16 @@ export default function ProjectDetail() {
   useEffect(() => {
     if (providers.length > 0) loadDeployments()
   }, [providers, loadDeployments])
+
+  const loadPlaybookRuns = useCallback(async () => {
+    const runs = await getPlaybookRuns()
+    setPlaybookRuns(runs.filter(r => providerIds.includes(r.providerId)))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [providers])
+
+  useEffect(() => {
+    if (providers.length > 0) loadPlaybookRuns()
+  }, [providers, loadPlaybookRuns])
 
   if (loading) return <div className="state-empty">Chargement…</div>
   if (error)   return <div className="state-error">{error}</div>
@@ -128,6 +143,10 @@ export default function ProjectDetail() {
             />
           )}
 
+          {tab === 'provisionnement' && (
+            <NewPlaybookRunForm onCreated={loadPlaybookRuns} />
+          )}
+
           {tab === 'logs' && (
             <>
               <DeploymentHistoryTable
@@ -139,6 +158,11 @@ export default function ProjectDetail() {
                 }}
                 title="Historique des déploiements"
                 emptyMessage="Aucun déploiement pour ce projet"
+              />
+              <PlaybookRunHistoryTable
+                runs={playbookRuns}
+                title="Historique des exécutions Ansible"
+                emptyMessage="Aucune exécution pour ce projet"
               />
               <div className="card">
                 <div className="card-title">Sauvegardes</div>

@@ -11,6 +11,7 @@ import { clientRoutes } from './routes/clients.js'
 import { clientProjectRoutes } from './routes/projects.js'
 import { cloudProviderRoutes } from './routes/cloudProviders.js'
 import { deploymentRoutes } from './routes/deployments.js'
+import { playbookRunRoutes } from './routes/playbookRuns.js'
 import { serveurRoutes } from './routes/serveurs.js'
 import { errorHandler, notFoundHandler } from './utils/errorHandler.js'
 import { config } from './config/index.js'
@@ -50,6 +51,7 @@ server.register(clientRoutes, { prefix: '/api/v1' })
 server.register(clientProjectRoutes, { prefix: '/api/v1' })
 server.register(cloudProviderRoutes, { prefix: '/api/v1' })
 server.register(deploymentRoutes, { prefix: '/api/v1' })
+server.register(playbookRunRoutes, { prefix: '/api/v1' })
 server.register(serveurRoutes, { prefix: '/api/v1' })
 
 

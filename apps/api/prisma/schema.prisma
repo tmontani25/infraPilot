@@ -46,6 +46,7 @@ model CloudProvider {
   credentials String       // JSON chiffré (AES-256-GCM), jamais stocké en clair
   deployments Deployment[]
   serveurs    Serveur[]
+  playbookRuns PlaybookRun[]
 }
 
 // Registre déclaratif des serveurs gérés (interne/VPS/Public Cloud), au-delà du
@@ -108,4 +109,18 @@ model Deployment {
   destroyOutput String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model PlaybookRun {
+  id         Int      @id @default(autoincrement())
+  providerId Int
+  provider   CloudProvider @relation(fields: [providerId], references: [id])
+  playbookId String   // ex: "ping", "nginx"
+  name       String
+  targetVms  String   // JSON des VMs ciblées, snapshot [{id, name, ip}] au lancement
+  sshUser    String   @default("ubuntu")
+  status     String   @default("pending") // pending | success | failed
+  output     String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

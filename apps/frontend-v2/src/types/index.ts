@@ -195,6 +195,33 @@ export interface DeploymentTemplate {
 
 export type DeploymentStatus = 'pending' | 'planned' | 'applied' | 'destroyed' | 'failed'
 
+export interface Playbook {
+  id: string
+  name: string
+  description: string
+}
+
+export type PlaybookRunStatus = 'pending' | 'success' | 'failed'
+
+export interface PlaybookRunTarget {
+  id: string
+  name: string
+  ip: string
+}
+
+export interface PlaybookRun {
+  id: number
+  providerId: number
+  playbookId: string
+  name: string
+  targetVms: PlaybookRunTarget[]
+  sshUser: string
+  status: PlaybookRunStatus
+  output: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 export interface Deployment {
   id: number
   providerId: number
