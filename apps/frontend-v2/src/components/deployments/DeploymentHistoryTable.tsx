@@ -7,11 +7,13 @@ import type { Deployment } from '../../types'
 export default function DeploymentHistoryTable({
   deployments,
   onChanged,
+  onDuplicate,
   title = 'Historique des déploiements',
   emptyMessage = 'Aucun déploiement',
 }: {
   deployments: Deployment[]
   onChanged: () => Promise<void>
+  onDuplicate?: (deployment: Deployment) => void
   title?: string
   emptyMessage?: string
 }) {
@@ -82,6 +84,9 @@ export default function DeploymentHistoryTable({
                         <button className="btn-secondary" disabled={busyId === d.id} onClick={() => handleDestroy(d.id)}>
                           {busyId === d.id ? 'Destruction…' : 'Destroy'}
                         </button>
+                      )}
+                      {onDuplicate && (
+                        <button className="btn-secondary" onClick={() => onDuplicate(d)}>Dupliquer</button>
                       )}
                     </div>
                   </td>

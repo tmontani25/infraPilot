@@ -12,8 +12,8 @@ import type { VM } from '../types'
 import type { Quotas } from '../services/quotas'
 
 // embedded=true : utilisé dans l'onglet "Vue" d'un projet Public Cloud, où le header
-// et la grille de VMs (Resources.tsx s'en charge déjà, avec recherche/filtres/création)
-// seraient redondants.
+// (nom de projet + bouton refresh) est redondant avec l'en-tête de la page déjà affiché
+// par ProjectDetail — la grille de VMs reste affichée dans les deux cas.
 export default function Dashboard({ embedded = false }: { embedded?: boolean } = {}) {
   const [vms, setVms] = useState<VM[]>([])
   const [loading, setLoading] = useState(true)
@@ -135,16 +135,14 @@ export default function Dashboard({ embedded = false }: { embedded?: boolean } =
         </div>
       )}
 
-      {!embedded && (
-        vms.length === 0 && !error ? (
-          <div className="state-empty">Aucune instance trouvée</div>
-        ) : (
-          <div className="grid-3">
-            {vms.map(vm => (
-              <VMCard key={vm.id} vm={vm} onRefresh={fetchVms} />
-            ))}
-          </div>
-        )
+      {vms.length === 0 && !error ? (
+        <div className="state-empty">Aucune instance trouvée</div>
+      ) : (
+        <div className="grid-3">
+          {vms.map(vm => (
+            <VMCard key={vm.id} vm={vm} onRefresh={fetchVms} />
+          ))}
+        </div>
       )}
     </>
   )

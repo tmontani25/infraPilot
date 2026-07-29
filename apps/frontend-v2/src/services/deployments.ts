@@ -14,7 +14,7 @@ export async function getDeployments(): Promise<Deployment[]> {
 export async function createDeployment(
   templateId: string,
   name: string,
-  variables: Record<string, string>
+  variables: Record<string, unknown>
 ): Promise<Deployment> {
   const { data } = await api.post('/deployments', { templateId, name, variables })
   return data.data.deployment

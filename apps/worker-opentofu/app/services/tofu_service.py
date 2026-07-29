@@ -29,7 +29,8 @@ def _run(args: list[str], cwd: Path, env: dict) -> tuple[bool, str]:
 def _tfvars_args(variables: dict) -> list[str]:
     args = []
     for key, value in variables.items():
-        args += ["-var", f"{key}={value}"]
+        serialized = json.dumps(value) if isinstance(value, (dict, list)) else value
+        args += ["-var", f"{key}={serialized}"]
     return args
 
 

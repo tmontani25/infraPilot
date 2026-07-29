@@ -9,7 +9,7 @@ import { getErrorMessage } from '../lib/errors'
 import Dashboard from './Dashboard'
 import NetworkPage from './Network'
 import Datastore from './Datastore'
-import NewDeploymentForm from '../components/deployments/NewDeploymentForm'
+import NewDeploymentForm, { type DeploymentPrefill } from '../components/deployments/NewDeploymentForm'
 import DeploymentHistoryTable from '../components/deployments/DeploymentHistoryTable'
 import type { Project, CloudProvider, DeploymentTemplate, Deployment } from '../types'
 
@@ -33,6 +33,7 @@ export default function ProjectDetail() {
   const [tab, setTab] = useState<Tab>('vue')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [prefill, setPrefill] = useState<DeploymentPrefill | null>(null)
 
   const fetchProject = useCallback(async () => {
     if (!projectId) return
@@ -119,7 +120,12 @@ export default function ProjectDetail() {
           {tab === 'reseau' && <NetworkPage key={`net-${activeProviderId}`} />}
 
           {tab === 'deploiement' && (
-            <NewDeploymentForm templates={templates} onCreated={loadDeployments} />
+            <NewDeploymentForm
+              templates={templates}
+              onCreated={loadDeployments}
+              prefill={prefill}
+              onPrefillApplied={() => setPrefill(null)}
+            />
           )}
 
           {tab === 'logs' && (
@@ -127,6 +133,10 @@ export default function ProjectDetail() {
               <DeploymentHistoryTable
                 deployments={deployments}
                 onChanged={loadDeployments}
+                onDuplicate={d => {
+                  setPrefill({ templateId: d.templateId, name: `${d.name}-copie`, variables: d.variables })
+                  setTab('deploiement')
+                }}
                 title="Historique des déploiements"
                 emptyMessage="Aucun déploiement pour ce projet"
               />

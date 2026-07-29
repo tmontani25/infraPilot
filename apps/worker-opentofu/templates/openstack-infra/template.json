@@ -1,0 +1,8 @@
+{
+  "id": "openstack-infra",
+  "name": "Infrastructure multi-VM",
+  "description": "Crée plusieurs VMs OpenStack en un seul déploiement, chacune avec ses propres image/flavor/réseau (ex: un serveur web + une base de données).",
+  "variables": [
+    { "name": "machines", "label": "Machines", "type": "machine_list" }
+  ]
+}

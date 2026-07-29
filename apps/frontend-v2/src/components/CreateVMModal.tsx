@@ -102,6 +102,7 @@ export default function CreateVMModal({ onClose, onCreated }: Props) {
                     <option key={img.id} value={img.id}>{img.name}</option>
                   ))}
                 </select>
+                {imageId && <div className="flavor-hint" style={{ fontFamily: 'monospace' }}>ID : {imageId}</div>}
               </div>
 
               <div className="form-group">
@@ -121,6 +122,7 @@ export default function CreateVMModal({ onClose, onCreated }: Props) {
                 {selectedFlavor && (
                   <div className="flavor-hint">
                     {selectedFlavor.vcpus} vCPU · {selectedFlavor.ram >= 1024 ? `${selectedFlavor.ram / 1024} GB` : `${selectedFlavor.ram} MB`} RAM · {selectedFlavor.disk} GB
+                    <span style={{ fontFamily: 'monospace' }}> · ID : {flavorId}</span>
                   </div>
                 )}
               </div>
@@ -137,6 +139,7 @@ export default function CreateVMModal({ onClose, onCreated }: Props) {
                     <option key={n.id} value={n.id}>{n.name}</option>
                   ))}
                 </select>
+                {networkId && <div className="flavor-hint" style={{ fontFamily: 'monospace' }}>ID : {networkId}</div>}
               </div>
 
               {error && <div className="state-error">{error}</div>}

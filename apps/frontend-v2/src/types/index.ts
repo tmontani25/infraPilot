@@ -164,6 +164,14 @@ export interface DeploymentTemplateVariable {
   type: string
 }
 
+// Une machine dans une variable de type "machine_list" (ex: template openstack-infra)
+export interface Machine {
+  name: string
+  image_id: string
+  flavor_id: string
+  network_id: string
+}
+
 export interface DeploymentTemplate {
   id: string
   name: string
@@ -178,7 +186,7 @@ export interface Deployment {
   providerId: number
   templateId: string
   name: string
-  variables: Record<string, string>
+  variables: Record<string, unknown>
   status: DeploymentStatus
   planOutput: string | null
   applyOutput: string | null
