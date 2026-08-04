@@ -50,3 +50,4 @@ tfplan
 
 # OS
 .DS_Store
+logs/

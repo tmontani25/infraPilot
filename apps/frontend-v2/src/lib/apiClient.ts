@@ -1,7 +1,12 @@
 import axios from 'axios'
 
+// En dev, l'IP/hostname utilisé pour joindre l'API est celui avec lequel le
+// navigateur a chargé le frontend (localhost en local, IP LAN pour un
+// collègue sur le réseau) — évite de coder une adresse en dur.
+const API_URL = import.meta.env.VITE_API_URL ?? `http://${window.location.hostname}:4000/api/v1`
+
 export const api = axios.create({
-    baseURL: 'http://localhost:4000/api/v1',
+    baseURL: API_URL,
     withCredentials: true
 })
 
