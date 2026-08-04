@@ -35,4 +35,11 @@ export async function playbookRunRoutes(server: FastifyInstance) {
         reply.status(201)
         return success({ run })
     })
+
+    server.post('/playbook-runs/:id/retry', async (req, reply) => {
+        const { id } = req.params as { id: string }
+        const run = await playbookRunService.retryRun(Number(id))
+        reply.status(201)
+        return success({ run })
+    })
 }

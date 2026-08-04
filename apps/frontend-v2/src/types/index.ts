@@ -201,7 +201,7 @@ export interface Playbook {
   description: string
 }
 
-export type PlaybookRunStatus = 'pending' | 'success' | 'failed'
+export type PlaybookRunStatus = 'pending' | 'running' | 'success' | 'failed'
 
 export interface PlaybookRunTarget {
   id: string

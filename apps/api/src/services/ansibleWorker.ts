@@ -21,7 +21,9 @@ export async function listPlaybooks() {
     return workerFetch('/playbooks')
 }
 
-export async function runPlaybook(
+// Lance le playbook et retourne dès que le process a démarré (statut "running"),
+// sans attendre la fin de l'exécution — le suivi se fait via getRunLog.
+export async function startRun(
     runId: number,
     playbookId: string,
     hosts: { name: string; ip: string }[],
@@ -32,4 +34,8 @@ export async function runPlaybook(
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ run_id: String(runId), playbook_id: playbookId, hosts, ssh_user: sshUser }),
     })
+}
+
+export async function getRunLog(runId: number): Promise<{ status: string; output: string }> {
+    return workerFetch(`/runs/${runId}/log`)
 }

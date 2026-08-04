@@ -90,6 +90,15 @@ export default function ProjectDetail() {
     if (providers.length > 0) loadPlaybookRuns()
   }, [providers, loadPlaybookRuns])
 
+  // tant qu'une exécution Ansible est en cours, on repoll pour afficher les logs
+  // au fur et à mesure (pas de websocket : un poll toutes les 1,5s suffit largement ici)
+  const hasRunInProgress = playbookRuns.some(r => r.status === 'running' || r.status === 'pending')
+  useEffect(() => {
+    if (!hasRunInProgress) return
+    const interval = setInterval(loadPlaybookRuns, 1500)
+    return () => clearInterval(interval)
+  }, [hasRunInProgress, loadPlaybookRuns])
+
   if (loading) return <div className="state-empty">Chargement…</div>
   if (error)   return <div className="state-error">{error}</div>
   if (!project) return null
@@ -161,6 +170,7 @@ export default function ProjectDetail() {
               />
               <PlaybookRunHistoryTable
                 runs={playbookRuns}
+                onRetried={loadPlaybookRuns}
                 title="Historique des exécutions Ansible"
                 emptyMessage="Aucune exécution pour ce projet"
               />

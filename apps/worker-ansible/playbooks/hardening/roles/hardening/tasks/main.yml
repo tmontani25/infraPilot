@@ -1,0 +1,45 @@
+- name: Mettre à jour le cache des paquets
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Installer unattended-upgrades
+  ansible.builtin.apt:
+    name: unattended-upgrades
+    state: present
+
+- name: Activer les mises à jour de sécurité automatiques
+  ansible.builtin.copy:
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+
+- name: Désactiver la connexion root en SSH
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PermitRootLogin'
+    line: 'PermitRootLogin no'
+  notify: Redémarrer sshd
+
+- name: Désactiver l'authentification par mot de passe en SSH
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+  notify: Redémarrer sshd
+
+- name: Installer ufw
+  ansible.builtin.apt:
+    name: ufw
+    state: present
+
+- name: Autoriser SSH dans le pare-feu
+  community.general.ufw:
+    rule: allow
+    name: OpenSSH
+
+- name: Activer ufw
+  community.general.ufw:
+    state: enabled
+    policy: deny

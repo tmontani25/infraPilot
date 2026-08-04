@@ -21,4 +21,9 @@ class RunRequest(BaseModel):
 @router.post("/runs")
 def create_run(body: RunRequest):
     hosts = [h.model_dump() for h in body.hosts]
-    return ansible_service.run_playbook(body.run_id, body.playbook_id, hosts, body.ssh_user, SSH_KEY_PATH)
+    return ansible_service.start_run(body.run_id, body.playbook_id, hosts, body.ssh_user, SSH_KEY_PATH)
+
+
+@router.get("/runs/{run_id}/log")
+def get_run_log(run_id: str):
+    return ansible_service.get_run_log(run_id)

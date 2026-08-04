@@ -1,5 +1,6 @@
 const STATUS_LABEL: Record<string, { cls: string; label: string }> = {
   pending: { cls: 'sp-build',  label: 'En cours' },
+  running: { cls: 'sp-build',  label: 'En cours' },
   success: { cls: 'sp-active', label: 'Succès' },
   failed:  { cls: 'sp-error',  label: 'Échec' },
 }

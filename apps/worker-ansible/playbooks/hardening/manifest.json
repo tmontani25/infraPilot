@@ -1,0 +1,5 @@
+{
+  "id": "hardening",
+  "name": "Durcissement de base",
+  "description": "Baseline sécurité pour une VM fraîchement créée : mises à jour, désactivation du login root/mot de passe en SSH, pare-feu UFW limité à SSH."
+}

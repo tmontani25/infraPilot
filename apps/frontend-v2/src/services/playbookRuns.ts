@@ -20,3 +20,8 @@ export async function createPlaybookRun(
   const { data } = await api.post('/playbook-runs', { playbookId, name, vmIds, sshUser })
   return data.data.run
 }
+
+export async function retryPlaybookRun(id: number): Promise<PlaybookRun> {
+  const { data } = await api.post(`/playbook-runs/${id}/retry`)
+  return data.data.run
+}
